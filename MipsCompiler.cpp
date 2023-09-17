@@ -15,7 +15,7 @@
 #include<string>
 
 
-class File
+class File//need to create a file reader as well to parse all the lines from the input c file.
 {
 public:
     std::string filepath;
