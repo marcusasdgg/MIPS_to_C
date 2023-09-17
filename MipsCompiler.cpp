@@ -30,7 +30,7 @@ public:
 
     bool push_back_line()
     {
-
+        return true;
     }
     
     bool insert_line(int num)
@@ -136,7 +136,7 @@ int main(int argc, char** argv) //has 2 arguments, one for filepath to cpp file 
     File assemble;
 
     assemble.filepath = argv[1];
-    
+
     
 
 
