@@ -19,17 +19,23 @@ class File//need to create a file reader as well to parse all the lines from the
 {
 public:
     std::string filepath;
-    std::ofstream outfile;
+    std::fstream outfile;
+    std::ifstream infile;
     File(){
-
+        std::string name;
+        name = filepath;
+        std::cout<<name<<std::endl;
+        infile.open(filepath);
+        
     }
     int varloader()
     {
-
+        return 0;
     }
 
     bool push_back_line()
     {
+
         return true;
     }
     
@@ -41,7 +47,7 @@ public:
 
     ~File()
     {
-
+        infile.close();
     }
 
 };
@@ -49,8 +55,13 @@ public:
 
 class MIPS : public File//this class stores 10 variables, i need to figure out how to do math operations, probably using operator overloading. for now only able to use integer math operations. as of 17/08 planning only to have printf and scanf functionality
 {   
+    
     public:
-        int registercounter = 0;
+        int registercounter;
+        MIPS()
+        {
+            registercounter = 0;
+        }
         std::map<std::string, int> variables; //typical map to assign a name to an integer, need to figure out how to map these to a register
         std::map<std::string, int> var_register_map;  //solution to above, just have 2 maps one to point to the integer and one to point to the register to be used
         //limitations of this system is no 2 same names for variables can be used
@@ -133,9 +144,11 @@ int main(int argc, char** argv) //has 2 arguments, one for filepath to cpp file 
         return 0;
     }
 
+
     File assemble;
 
     assemble.filepath = argv[1];
+
 
     
 
