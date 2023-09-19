@@ -18,14 +18,32 @@
 class File//need to create a file reader as well to parse all the lines from the input c file.
 {
 public:
-    std::string filepath;
+    std::string in_filepath;
+    std::string out_filepath;
     std::fstream outfile;
     std::ifstream infile;
-    File(){
-        std::string name;
-        name = filepath;
-        std::cout<<name<<std::endl;
-        infile.open(filepath);
+    File(std::string filepat,std::string output){
+        in_filepath = filepat;
+        infile.open(in_filepath);
+        std::string line;
+        if(!infile.is_open())
+        {
+            std::cout<<"errors\n";
+            return;
+        }
+
+        
+        while(getline ( infile , line ))
+        {
+            
+            std::cout<<line<<std::endl;
+        }
+
+        std::cout<<"compiling "<<in_filepath<<" into "<<output<<std::endl;
+
+{
+
+}
         
     }
     int varloader()
@@ -39,8 +57,9 @@ public:
         return true;
     }
     
-    bool insert_line(int num)
+    bool insert_line(int num)//adds lines in specific line number pushing stuff back
     {
+
         return true;
     }
 
@@ -58,10 +77,10 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
     
     public:
         int registercounter;
-        MIPS()
-        {
-            registercounter = 0;
-        }
+        // MIPS()
+        // {
+        //     registercounter = 0;
+        // }
         std::map<std::string, int> variables; //typical map to assign a name to an integer, need to figure out how to map these to a register
         std::map<std::string, int> var_register_map;  //solution to above, just have 2 maps one to point to the integer and one to point to the register to be used
         //limitations of this system is no 2 same names for variables can be used
@@ -134,20 +153,18 @@ int main(int argc, char** argv) //has 2 arguments, one for filepath to cpp file 
 {
     if(argc < 3)
     {
-        std::cout<<"Error: Arguments are missing";
+        std::cout<<"Error: Arguments are missing\n";
         return 0;
     }
 
     if(argc > 3)
     {
-        std::cout<<"Error: too many arguments";
+        std::cout<<"Error: too many arguments\n";
         return 0;
     }
 
 
-    File assemble;
-
-    assemble.filepath = argv[1];
+    File assemble(argv[1],argv[2]);
 
 
     
