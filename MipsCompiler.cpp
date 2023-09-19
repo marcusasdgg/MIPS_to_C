@@ -14,6 +14,28 @@
 #include<map>
 #include<string>
 
+enum class File_type
+{
+    INTEGER,
+    STRING,
+    DOUBLE
+};
+
+enum class Operation_type
+{
+    INITIALIZE_VARIABLE,
+    PRINTF,
+    SCANF,
+    ASSIGN_VARIABLE,
+    ADD,
+    SUBTRACT,
+    MULTIPLY,
+    DIVIDE,
+    EMPTY,
+    IF,
+    ELSE
+};
+
 
 class File//need to create a file reader as well to parse all the lines from the input c file.
 {
@@ -31,20 +53,19 @@ public:
             std::cout<<"errors\n";
             return;
         }
+        std::cout<<std::endl<<"Found file "<<in_filepath<<" Preview of File: "<<std::endl<<std::endl;
 
-        
+        int count = 0;
         while(getline ( infile , line ))
         {
-            
+            if(count > 5)
+            {
+                break;
+            }
             std::cout<<line<<std::endl;
+            count++;
         }
-
-        std::cout<<"compiling "<<in_filepath<<" into "<<output<<std::endl;
-
-{
-
-}
-        
+        std::cout<<std::endl<<std::endl<<"compiling "<<in_filepath<<" into "<<output<<std::endl;
     }
     int varloader()
     {
@@ -85,7 +106,7 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
         std::map<std::string, int> var_register_map;  //solution to above, just have 2 maps one to point to the integer and one to point to the register to be used
         //limitations of this system is no 2 same names for variables can be used
 
-        bool assign(int num,const std::string& str) // assign an integer variable
+        bool assign(int num,const std::string& str) // assign an integer variable //will be overloaded with different types like string and double.
         {
             if(registercounter > 9)
             {
@@ -107,9 +128,16 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
             }
         }
 
+        bool file_parser()
+        {
+            infile
+        }
 
 
-        bool printf(int var)
+//all of the input and output stuff
+//i think all the arguments should be of type string cus thats how we named the 'variables'. take from the predefined map we just made. oh but like we can build this into the parser
+// idk though, nah lets just let the parser do the
+        bool printf(int var) 
         {
 
             return true;
