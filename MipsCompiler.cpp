@@ -7,6 +7,9 @@
 
 //for uni purposes i will have to make the mips do the math, which means using mips instructions for the math.
 
+//do i need a whole entire another class to deal with file parsing?
+
+
 
 #include<iostream>
 #include<fstream>
@@ -33,7 +36,20 @@ enum class Operation_type
     DIVIDE,
     EMPTY,
     IF,
-    ELSE
+    ELSE,
+    RETURN
+};
+
+struct Variable_Locate
+{
+    enum File_type type;
+    int line_number;
+};
+
+struct Operation_Locate
+{
+    enum Operation_type type;
+    int line_number;
 };
 
 
@@ -45,49 +61,54 @@ public:
     std::fstream outfile;
     std::ifstream infile;
     bool open_state;
+    int line_count = 0;
+
+    std::vector<struct Operation_Locate> Op_Store;
+    std::vector<struct Variable_Locate> Var_Store;
     
     File(std::string filepat,std::string output){
         in_filepath = filepat;
         infile.open(in_filepath);
-        output = out_filepath;
-        outfile.open(out_filepath);
-        if(!outfile.is_open())
-        {
-            std::cout<<"error: "<<out_filepath<<"could not be created"<<std::endl;
-            open_state = false;
-            return;
-        }
-        std::cout<<out_filepath<<"was successfully created."<<std::endl;
-        std::string line;
+        out_filepath = output;
+        outfile.open(out_filepath,std::ios::out);
+        
         if(!infile.is_open())
         {
-            std::cout<<"errors\n";
+            std::cout<<"Error: File \""<<in_filepath<<"\" could not be found\n";
             open_state = false;
             return;
         }
-        std::cout<<std::endl<<"Found file "<<in_filepath<<" Preview of File: "<<std::endl<<std::endl;
-
-        int count = 0;
+        std::cout<<std::endl<<"Found file \""<<in_filepath<<"\" Preview of File: \""<<std::endl<<std::endl;
+        std::string line;
         while(getline ( infile , line ))
         {
-            if(count > 5)
+            if(line_count < 5)
             {
-                break;
+                 std::cout<<line<<std::endl;
             }
-            std::cout<<line<<std::endl;
-            count++;
+            line_count++;
         }
-        std::cout<<std::endl<<std::endl<<"compiling "<<in_filepath<<" into "<<output<<std::endl;
+        if(!outfile.is_open())
+        {
+            std::cout<<"error: \""<<out_filepath<<"\" could not be created"<<std::endl;
+            open_state = false;
+            return;
+        }
+        std::cout<<std::endl<<"\""<<out_filepath<<"\"was successfully created."<<std::endl;
+        
+        std::cout<<std::endl<<"compiling "<<in_filepath<<" into "<<output<<std::endl;
         open_state = true;
     }
-    int varloader()
-    {
-        return 0;
-    }
 
+//these are all the output functions, i.e adds to the a.out
     bool push_back_line()
     {
 
+        return true;
+    }
+
+    bool pop_back_line()
+    {
         return true;
     }
     
@@ -116,10 +137,14 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
     
     public:
         int registercounter;
-        void initializer()
-        {
-            registercounter = 0;
-        }
+        MIPS(const std::string& input, const std::string& output)
+    : File(input, output) // Initialize the base class
+{
+    registercounter = 0;
+}
+
+        
+
         std::map<std::string, int> variables; //typical map to assign a name to an integer, need to figure out how to map these to a register
         std::map<std::string, int> var_register_map;  //solution to above, just have 2 maps one to point to the integer and one to point to the register to be used
         //limitations of this system is no 2 same names for variables can be used
@@ -145,17 +170,6 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
                 return 0;
             }
         }
-
-        bool file_parser()
-        {
-            return true;
-        }
-
-        bool is_open()
-        {
-            if()
-        }
-
 //all of the input and output stuff
 //i think all the arguments should be of type string cus thats how we named the 'variables'. take from the predefined map we just made. oh but like we can build this into the parser
 // idk though, nah lets just let the parser do the
@@ -191,9 +205,16 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
         }
 
 
+        void parser()
+        {
+
+        }
+
 
 
 };
+
+
 
 
 
@@ -213,17 +234,12 @@ int main(int argc, char** argv) //has 2 arguments, one for filepath to cpp file 
         return 0;
     }
 
-
-    File assemble(argv[1],argv[2]);
+    MIPS assemble(argv[1],argv[2]);
     if (!assemble.if_open())
     {
         std::cout<<"Exiting Program due to Error: File management issue.\n";
         return 1;
     }
 
-
-
     
-
-
 }
