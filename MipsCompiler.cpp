@@ -77,10 +77,10 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
     
     public:
         int registercounter;
-        // MIPS()
-        // {
-        //     registercounter = 0;
-        // }
+        void initializer()
+        {
+            registercounter = 0;
+        }
         std::map<std::string, int> variables; //typical map to assign a name to an integer, need to figure out how to map these to a register
         std::map<std::string, int> var_register_map;  //solution to above, just have 2 maps one to point to the integer and one to point to the register to be used
         //limitations of this system is no 2 same names for variables can be used
