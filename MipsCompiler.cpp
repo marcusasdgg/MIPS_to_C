@@ -5,7 +5,7 @@
 //i should definitely learn how to use try throw and catch for error management but ceebs
 
 
-//for uni purposes i will have to make the mips do the math, which means using mips instructions.
+//for uni purposes i will have to make the mips do the math, which means using mips instructions for the math.
 
 
 #include<iostream>
@@ -44,13 +44,25 @@ public:
     std::string out_filepath;
     std::fstream outfile;
     std::ifstream infile;
+    bool open_state;
+    
     File(std::string filepat,std::string output){
         in_filepath = filepat;
         infile.open(in_filepath);
+        output = out_filepath;
+        outfile.open(out_filepath);
+        if(!outfile.is_open())
+        {
+            std::cout<<"error: "<<out_filepath<<"could not be created"<<std::endl;
+            open_state = false;
+            return;
+        }
+        std::cout<<out_filepath<<"was successfully created."<<std::endl;
         std::string line;
         if(!infile.is_open())
         {
             std::cout<<"errors\n";
+            open_state = false;
             return;
         }
         std::cout<<std::endl<<"Found file "<<in_filepath<<" Preview of File: "<<std::endl<<std::endl;
@@ -66,6 +78,7 @@ public:
             count++;
         }
         std::cout<<std::endl<<std::endl<<"compiling "<<in_filepath<<" into "<<output<<std::endl;
+        open_state = true;
     }
     int varloader()
     {
@@ -82,6 +95,11 @@ public:
     {
 
         return true;
+    }
+
+    bool if_open()
+    {
+        return open_state;
     }
 
 
@@ -130,9 +148,13 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
 
         bool file_parser()
         {
-            infile
+            return true;
         }
 
+        bool is_open()
+        {
+            if()
+        }
 
 //all of the input and output stuff
 //i think all the arguments should be of type string cus thats how we named the 'variables'. take from the predefined map we just made. oh but like we can build this into the parser
@@ -193,6 +215,12 @@ int main(int argc, char** argv) //has 2 arguments, one for filepath to cpp file 
 
 
     File assemble(argv[1],argv[2]);
+    if (!assemble.if_open())
+    {
+        std::cout<<"Exiting Program due to Error: File management issue.\n";
+        return 1;
+    }
+
 
 
     
