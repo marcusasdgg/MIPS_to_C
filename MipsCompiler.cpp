@@ -46,6 +46,12 @@ enum class Operation_type
 
 struct Variable_Locate
 {
+    Variable_Locate()
+    {
+        type = Var_type::EMPTY;
+        line_number = -1;
+        char_position = -1;
+    }
     enum Var_type type;
     int line_number;
     int char_position;
@@ -53,6 +59,12 @@ struct Variable_Locate
 
 struct Operation_Locate
 {
+    Operation_Locate()
+    {
+        type = Operation_type::EMPTY;
+        line_number = -1;
+        char_position = -1;
+    }
     enum Operation_type type;
     int line_number;
     int char_position;
@@ -256,7 +268,7 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
         {
             return true;
         }
-        enum Var_type Find_Var(std::string line) //this checks if there contains any variable keywords, if none returns empty.
+        struct Variable_Locate Find_Var(std::string line) //this checks if there contains any variable keywords, if none returns empty.
         {
             for (int i = 0 ; i < 3 ; i++)
             {
@@ -288,7 +300,7 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
             return Var_type::EMPTY;
         }
 
-        enum Operation_type Find_Op(std::string line) //checks if any contains any operation keywords (including variables) returns the enum for that else returns empty.
+        struct Operation_Locate Find_Op(std::string line) //checks if any contains any operation keywords (including variables) returns the enum for that else returns empty.
         {
             for (int i = 3 ; i < 15 ; i++)
             {
@@ -397,16 +409,7 @@ inline void MIPS::parser()//here comes the hard part, searching for "key words l
         current_line = get_line(i);
         var_done = Find_Var(current_line);
         op_done = Find_Op(current_line);
-        if (var_done != Var_type::EMPTY)
-        {
-
-        }
-        if (op_done != Var_type::EMPTY)
-        {
-            struct Operation_Locate tempOp;
-            tempOp.
-            Op_Store.push_back();
-        }
+        
         
         //error need to fix: return type of findop and findvar need to be the struct to carry more info
         
