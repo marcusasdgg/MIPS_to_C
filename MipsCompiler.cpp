@@ -56,6 +56,7 @@ struct Operation_Locate
     enum Operation_type type;
     int line_number;
     int char_position;
+    std::string line;
 };
 
 
@@ -289,6 +290,64 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
 
         enum Operation_type Find_Op(std::string line) //checks if any contains any operation keywords (including variables) returns the enum for that else returns empty.
         {
+            for (int i = 3 ; i < 15 ; i++)
+            {
+                std::size_t found = line.find(keywords[i]);
+                if ( found != std::string::npos)
+                {
+                    if (i ==  3)
+                    {
+                        return Operation_type::PRINTF;
+                    }
+                    if (i == 4)
+                    {
+                        return Operation_type::SCANF;
+                    }
+
+                    if (line[found + keywords[i].size()] != ' ')
+                    {
+                        continue;
+                    }
+                    
+                    switch (i)
+                    {
+                    case 5:
+                        return Operation_type::ADD;
+                        break;
+                    case 6:
+                        return Operation_type::SUBTRACT;
+                        break;
+                    case 7:
+                        return Operation_type::DIVIDE;
+                        break;
+                    case 8:
+                        return Operation_type::MOD;
+                        break;
+                    case 9:
+                        return Operation_type::RETURN;
+                        break;
+                    case 10:
+                        return Operation_type::WHILE;
+                        break;
+                    case 11:
+                        return Operation_type::IF;
+                        break;
+                    case 12:
+                        return Operation_type::ELSE;
+                        break;
+                    case 13:
+                        return Operation_type::EMPTY;
+                        break;
+                    case 14:
+                        return Operation_type::EMPTY;  
+                        break;
+                    default:
+                        break;
+                    }
+                    
+                }
+            }
+            return Operation_type::EMPTY;
 
         }
 
@@ -331,9 +390,25 @@ int main(int argc, char** argv) //has 2 arguments, one for filepath to cpp file 
 inline void MIPS::parser()//here comes the hard part, searching for "key words like int, double, string printf etc."
 {
     std::string current_line;
+    Operation_type op_done;
+    Var_type var_done;
     for(int i = 0 ; i < line_count ; i++)
     {
         current_line = get_line(i);
+        var_done = Find_Var(current_line);
+        op_done = Find_Op(current_line);
+        if (var_done != Var_type::EMPTY)
+        {
+
+        }
+        if (op_done != Var_type::EMPTY)
+        {
+            struct Operation_Locate tempOp;
+            tempOp.
+            Op_Store.push_back();
+        }
+        
+        //error need to fix: return type of findop and findvar need to be the struct to carry more info
         
     }
     
