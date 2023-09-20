@@ -9,6 +9,8 @@
 
 //do i need a whole entire another class to deal with file parsing?
 
+//also this compiler is built ina  manner where it will not matter how the line is ended i.e no ;
+
 
 
 #include<iostream>
@@ -430,6 +432,8 @@ int main(int argc, char** argv) //has 2 arguments, one for filepath to cpp file 
         return 1;
     }
 
+    assemble.parser();
+
     
 }
 
@@ -466,14 +470,15 @@ inline void MIPS::coder() //this will read the stuff in the 2 vectors and actual
 {
     // std::vector<struct Operation_Locate> Op_Store;
     //std::vector<struct Variable_Locate> Var_Store;
-    for (int i = 0 ; i < Op_Store.size() ; i ++)
-    {
-    }
-
     for (int j = 0 ; j < Var_Store.size() ; j++)
     {
 
     }
+    for (int i = 0 ; i < Op_Store.size() ; i ++)
+    {
+    }
+
+    
 
 }
 
@@ -484,3 +489,4 @@ inline void MIPS::coder() //this will read the stuff in the 2 vectors and actual
 // i.e intiazlie variable integer i = 0;
 // integer will be added into the vector map with value 0
 // afterwards will need a function to searchfor the name of that variable anywhere after the point where it was initialized.
+//oh wait no need can just call a function to search for name of a variable that is used after any operation.
