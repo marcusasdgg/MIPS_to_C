@@ -55,6 +55,7 @@ struct Variable_Locate
     enum Var_type type;
     int line_number;
     int char_position;
+    std::string line;
 };
 
 struct Operation_Locate
@@ -240,7 +241,7 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
 // idk though, nah lets just let the parser do the
         bool printf(int var) 
         {
-
+            
             return true;
         }
 
@@ -284,18 +285,21 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
                     {
                         case 0:
                             temp.char_position = found;
+                            temp.line = line;
                             temp.type = Var_type::INTEGER;
                             return temp;
                         break;
                         
                         case 1:
                             temp.char_position = found;
+                            temp.line = line;
                             temp.type = Var_type::STRING;
                             return temp;
                         break;
 
                         case 2:
                             temp.char_position = found;
+                            temp.line = line;
                             temp.type = Var_type::DOUBLE;
                             return temp;
                         break;
@@ -396,6 +400,7 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
         void parser(); //parses text in the input file into a vector of either operations or variable assigning
 
         void coder(); //adds the represented vectors as mips assembly in the output file.
+
 };
 
 
@@ -455,5 +460,27 @@ inline void MIPS::parser()//here comes the hard part, searching for "key words l
         //error need to fix: return type of findop and findvar need to be the struct to carry more info
         
     }
-    
 }
+
+inline void MIPS::coder() //this will read the stuff in the 2 vectors and actually start adding the assembly in to the out file. bfore we finish this need to add in assembly for printf etc. initiazlie variable.
+{
+    // std::vector<struct Operation_Locate> Op_Store;
+    //std::vector<struct Variable_Locate> Var_Store;
+    for (int i = 0 ; i < Op_Store.size() ; i ++)
+    {
+    }
+
+    for (int j = 0 ; j < Var_Store.size() ; j++)
+    {
+
+    }
+
+}
+
+
+//huge error: forgot to add the variable initializer. need to create a function that reads the line 
+    
+// this will be complicated, every line will also have to search for the mapped 'variables'.
+// i.e intiazlie variable integer i = 0;
+// integer will be added into the vector map with value 0
+// afterwards will need a function to searchfor the name of that variable anywhere after the point where it was initialized.
