@@ -270,6 +270,7 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
         }
         struct Variable_Locate Find_Var(std::string line) //this checks if there contains any variable keywords, if none returns empty.
         {
+            struct Variable_Locate temp;
             for (int i = 0 ; i < 3 ; i++)
             {
                 std::size_t found = line.find(keywords[i]);
@@ -282,26 +283,33 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
                     switch(i)
                     {
                         case 0:
-                            return Var_type::INTEGER;
+                            temp.char_position = found;
+                            temp.type = Var_type::INTEGER;
+                            return temp;
                         break;
                         
                         case 1:
-                            return Var_type::STRING;
+                            temp.char_position = found;
+                            temp.type = Var_type::STRING;
+                            return temp;
                         break;
 
                         case 2:
-                            return Var_type::DOUBLE;
+                            temp.char_position = found;
+                            temp.type = Var_type::DOUBLE;
+                            return temp;
                         break;
 
                     }
                     
                 }
             }
-            return Var_type::EMPTY;
+            return temp;
         }
 
         struct Operation_Locate Find_Op(std::string line) //checks if any contains any operation keywords (including variables) returns the enum for that else returns empty.
         {
+            struct Operation_Locate temp;
             for (int i = 3 ; i < 15 ; i++)
             {
                 std::size_t found = line.find(keywords[i]);
@@ -309,11 +317,17 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
                 {
                     if (i ==  3)
                     {
-                        return Operation_type::PRINTF;
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::PRINTF;
+                        return temp;
                     }
                     if (i == 4)
                     {
-                        return Operation_type::SCANF;
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::SCANF;
+                        return temp;
                     }
 
                     if (line[found + keywords[i].size()] != ' ')
@@ -324,34 +338,50 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
                     switch (i)
                     {
                     case 5:
-                        return Operation_type::ADD;
-                        break;
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::ADD;
+                        return temp;
                     case 6:
-                        return Operation_type::SUBTRACT;
-                        break;
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::SUBTRACT;
+                        return temp;
                     case 7:
-                        return Operation_type::DIVIDE;
-                        break;
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::DIVIDE;
+                        return temp;
                     case 8:
-                        return Operation_type::MOD;
-                        break;
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::MOD;
+                        return temp;
                     case 9:
-                        return Operation_type::RETURN;
-                        break;
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::RETURN;
+                        return temp;
                     case 10:
-                        return Operation_type::WHILE;
-                        break;
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::WHILE;
+                        return temp;
                     case 11:
-                        return Operation_type::IF;
-                        break;
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::IF;
+                        return temp;
                     case 12:
-                        return Operation_type::ELSE;
-                        break;
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::ELSE;
+                        return temp;
                     case 13:
-                        return Operation_type::EMPTY;
+                        return temp;
                         break;
                     case 14:
-                        return Operation_type::EMPTY;  
+                        return temp;
                         break;
                     default:
                         break;
@@ -359,7 +389,7 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
                     
                 }
             }
-            return Operation_type::EMPTY;
+            return temp;
 
         }
 
@@ -402,14 +432,25 @@ int main(int argc, char** argv) //has 2 arguments, one for filepath to cpp file 
 inline void MIPS::parser()//here comes the hard part, searching for "key words like int, double, string printf etc."
 {
     std::string current_line;
-    Operation_type op_done;
-    Var_type var_done;
+    struct Operation_Locate Op;
+    struct Variable_Locate Var;
     for(int i = 0 ; i < line_count ; i++)
     {
         current_line = get_line(i);
-        var_done = Find_Var(current_line);
-        op_done = Find_Op(current_line);
+        Var = Find_Var(current_line);
+        Op = Find_Op(current_line);
         
+        if (Var.type != Var_type::EMPTY)
+        {
+            Var.line_number = i;
+            Var_Store.push_back(Var);
+        }
+
+        if (Op.type != Operation_type::EMPTY)
+        {
+            Op.line_number = i;
+            Op_Store.push_back(Op);
+        }
         
         //error need to fix: return type of findop and findvar need to be the struct to carry more info
         
