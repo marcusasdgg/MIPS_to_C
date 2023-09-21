@@ -47,6 +47,8 @@ enum class Equ_type
     BIGGER,
     SMALLER,
     NOT_EQUAL,
+    BIGGER_EQUAL,
+    SMALLER_EQUAL,
     EMPTY
 };
 
@@ -76,8 +78,8 @@ enum class Sqr_Brkt_type
 
 enum class Sqig_Brkt_type
 {
-    Squiggly_Left,
-    Squigly_Right,
+    SQUIGGLY_LEFT,
+    SQUIGGLY_RIGHT,
     EMPTY
 };
 
@@ -562,7 +564,7 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
 
         {
             struct Operation_Locate temp;
-            for (int i = 3 ; i < 15 ; i++)
+            for (int i = 3 ; i < 9 ; i++)
             {
                 std::size_t found = line.find(keywords[i]);
                 if ( found != std::string::npos)
@@ -621,14 +623,73 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
 
         struct Equality_Locate Find_Eq(std::string line)
         {
-            
+            struct Equality_Locate temp;
+            for (int i = 11 ; i < 16 ; i++)
+            {
+                std::size_t found = line.find(keywords[i]);
+                if ( found != std::string::npos)
+                {
+                    if (line[found + keywords[i].size()] != ' ')
+                    {
+                        continue;
+                    }
+
+                    switch (i)
+                    {
+                        case 11:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Equ_type::EQUAL;
+                        return temp;
+                        case 12:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Equ_type::SMALLER;
+                        return temp;
+                        case 13:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Equ_type::BIGGER;
+                        return temp;
+                        case 14:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Equ_type::SMALLER_EQUAL;
+                        return temp;
+                        case 15:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Equ_type::BIGGER_EQUAL;
+                        return temp;
+                        default:
+                            break;
+                    }
+                }
+                
+            }
+            return temp;
         }
 
         struct Math_Locate Find_Mat(std::string line)
         {
+            struct Math_Locate temp;
+        }   
 
+        struct Round_Locate Find_Locate(std::string line)
+        {
+            struct Round_Locate temp;
+        }
+        
+        
+        struct Square_Locate Find_Square(std::string line)
+        {
+            struct Square_Locate temp;
         }
 
+        struct Squiggly_Locate Find_Squigglyt(std::string line)
+        {
+            struct Squiggly_Locate temp;
+        }
 
         void parser(); //parses text in the input file into a vector of either operations or variable assigning
 
