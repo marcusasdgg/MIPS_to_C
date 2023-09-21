@@ -33,18 +33,122 @@ enum class Operation_type
     PRINTF,
     SCANF,
     ASSIGN_VARIABLE,
-    ADD,
-    SUBTRACT,
-    MULTIPLY,
-    DIVIDE,
-    MOD,
     EMPTY,
     IF,
     ELSE,
     RETURN,
     FOR,
     WHILE,
+};
+
+enum class Equ_type
+{
     EQUAL,
+    BIGGER,
+    SMALLER,
+    NOT_EQUAL,
+    EMPTY
+};
+
+enum class Mat_type
+{
+    ADD,
+    SUBTRACT,
+    MULTIPLY,
+    DIVIDE,
+    MOD,
+    EMPTY
+};
+
+enum class Rd_Brkt_type
+{
+    ROUND_LEFT,
+    ROUND_RIGHT,
+    EMPTY
+};
+
+enum class Sqr_Brkt_type
+{
+    SQUARE_LEFT,
+    SQUARE_RIGHT,
+    EMPTY
+};
+
+enum class Sqig_Brkt_type
+{
+    Squiggly_Left,
+    Squigly_Right,
+    EMPTY
+};
+
+struct Equality_Locate
+{
+    Equality_Locate()
+    {
+        type = Equ_type::EMPTY;
+        line_number = -1;
+        char_position = -1;
+    }
+    enum Equ_type type;
+    int line_number;
+    int char_position;
+    std::string line;
+};
+
+struct Math_Locate
+{
+    Math_Locate()
+    {
+        type = Mat_type::EMPTY;
+        line_number = -1;
+        char_position = -1;
+    }
+    enum Mat_type type;
+    int line_number;
+    int char_position;
+    std::string line;
+};
+
+struct Round_Locate
+{
+    Round_Locate()
+    {
+        type = Rd_Brkt_type::EMPTY;
+        line_number = -1;
+        char_position = -1;
+    }
+    enum Rd_Brkt_type type;
+    int line_number;
+    int char_position;
+    std::string line;
+};
+
+struct Square_Locate
+{
+    Square_Locate()
+    {
+        type = Sqr_Brkt_type::EMPTY;
+        line_number = -1;
+        char_position = -1;
+    }
+    enum Sqr_Brkt_type type;
+    int line_number;
+    int char_position;
+    std::string line;
+};
+
+struct Squiggly_Locate
+{
+    Squiggly_Locate()
+    {
+        type = Sqig_Brkt_type::EMPTY;
+        line_number = -1;
+        char_position = -1;
+    }
+    enum Sqig_Brkt_type type;
+    int line_number;
+    int char_position;
+    std::string line;
 };
 
 struct Variable_Locate
@@ -88,8 +192,15 @@ public:
 
     std::vector<std::string> keywords;
 
-    std::vector<struct Operation_Locate> Op_Store;
-    std::vector<struct Variable_Locate> Var_Store;
+    std::vector<Operation_Locate> Op_Store;
+    std::vector<Variable_Locate> Var_Store;
+    std::vector<Equality_Locate> Equ_Store;
+    std::vector<Math_Locate> Mat_Store;
+    std::vector<Squiggly_Locate> Equ_Store;
+    std::vector<Square_Locate> Equ_Store;
+    std::vector<Round_Locate> Equ_Store;
+
+
     
     File(std::string filepat,std::string output){
         in_filepath = filepat;
@@ -133,30 +244,32 @@ public:
         keywords.push_back("printf");//index 3 //function to find implemented_op
         keywords.push_back("scanf"); //index 4
 
-        keywords.push_back("+");//index 5
-        keywords.push_back("-");//index 6  //function to find implemented find_op
-        keywords.push_back("/");//index 7
-        keywords.push_back("%");//index 8
 
-        keywords.push_back("return");//index 9
-        keywords.push_back("while");//index 10
-        keywords.push_back("if");//index 11 //function to find implemented find_op will make a new one in future
-        keywords.push_back("else");//index 12
+        keywords.push_back("return");//index 5
+        keywords.push_back("while");//index 6
+        keywords.push_back("if");//index 7 //function to find implemented find_op will make a new one in future
+        keywords.push_back("else");//index 8
         
-        keywords.push_back("{");//index 13
-        keywords.push_back("}");//index 14 //not yet implemented
+        keywords.push_back("{");//index 9
+        keywords.push_back("}");//index 10 //not yet implemented
 
-        keywords.push_back("=");//index 15
-        keywords.push_back("<");//index 16
-        keywords.push_back(">");//index 17 //not yet implemented
-        keywords.push_back("<=");//index 18
-        keywords.push_back(">=");//index 19
+        keywords.push_back("=");//index 11
+        keywords.push_back("<");//index 12
+        keywords.push_back(">");//index 13 //not yet implemented
+        keywords.push_back("<=");//index 14
+        keywords.push_back(">=");//index 15
 
-        keywords.push_back("(");//index 13
-        keywords.push_back(")");//index 14 //not yet implemented
+        keywords.push_back("(");//index 16
+        keywords.push_back(")");//index 17 //not yet implemented
 
-        keywords.push_back("["); //index 15 //not yet implemented
-        keywords.push_back("]"); //index 16
+        keywords.push_back("["); //index 18 //not yet implemented
+        keywords.push_back("]"); //index 19
+
+        keywords.push_back("+");//index 20
+        keywords.push_back("-");//index 21  //not yet implmented
+        keywords.push_back("/");//index 22
+        keywords.push_back("*");//index 23
+        keywords.push_back("%");//index 24
     }
 
 //these are all the output functions, i.e adds to the a.out
@@ -479,55 +592,23 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
                     case 5:
                         temp.line = line;
                         temp.char_position = found;
-                        temp.type = Operation_type::ADD;
+                        temp.type = Operation_type::RETURN;
                         return temp;
                     case 6:
                         temp.line = line;
                         temp.char_position = found;
-                        temp.type = Operation_type::SUBTRACT;
+                        temp.type = Operation_type::WHILE;
                         return temp;
                     case 7:
                         temp.line = line;
                         temp.char_position = found;
-                        temp.type = Operation_type::DIVIDE;
+                        temp.type = Operation_type::IF;
                         return temp;
                     case 8:
                         temp.line = line;
                         temp.char_position = found;
-                        temp.type = Operation_type::MOD;
-                        return temp;
-                    case 9:
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Operation_type::RETURN;
-                        return temp;
-                    case 10:
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Operation_type::WHILE;
-                        return temp;
-                    case 11:
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Operation_type::IF;
-                        return temp;
-                    case 12:
-                        temp.line = line;
-                        temp.char_position = found;
                         temp.type = Operation_type::ELSE;
                         return temp;
-                    case 13:
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Operation_type::EQUAL;
-                        return temp;
-                        break;
-                    case 14:
-                        return temp;
-                        break;
-                    case 15:
-                        return temp;
-                        break;
                     default:
                         break;
                     }
@@ -537,6 +618,17 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
             return temp;
 
         }
+
+        struct Equality_Locate Find_Eq(std::string line)
+        {
+            
+        }
+
+        struct Math_Locate Find_Mat(std::string line)
+        {
+
+        }
+
 
         void parser(); //parses text in the input file into a vector of either operations or variable assigning
 
