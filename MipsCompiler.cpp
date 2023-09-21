@@ -126,8 +126,8 @@ public:
         //add possible keywords to search for in the parse.
 
         keywords.push_back("int");
-        keywords.push_back("string(");
-        keywords.push_back("double(");
+        keywords.push_back("string");
+        keywords.push_back("double");
 
         keywords.push_back("printf(");
         keywords.push_back("scanf(");
@@ -173,6 +173,108 @@ public:
     ~File()
     {
         infile.close();
+    }
+
+    template<typename T>
+void print_type(T foo)
+{
+    if constexpr (std::is_same_v<T, Operation_type>) {
+        switch (foo) {
+            case Operation_type::INITIALIZE_VARIABLE:
+                std::cout << "Op Initialize Variable\n";
+                break;
+            case Operation_type::PRINTF:
+                std::cout << "Op Printf\n";
+                break;
+            case Operation_type::SCANF:
+                std::cout << "Op Scanf\n";
+                break;
+            case Operation_type::ASSIGN_VARIABLE:
+                std::cout << "Op Assign Variable\n";
+                break;
+            case Operation_type::ADD:
+                std::cout << "Op Addition\n";
+                break;
+            case Operation_type::SUBTRACT:
+                std::cout << "Op Subtract\n";
+                break;
+            case Operation_type::MULTIPLY:
+                std::cout << "Op Multiply\n";
+                break;
+            case Operation_type::DIVIDE:
+                std::cout << "Op Divide\n";
+                break;
+            case Operation_type::MOD:
+                std::cout << "Op Mod\n";
+                break;
+            case Operation_type::EMPTY:
+                std::cout << "Op Empty\n";
+                break;
+            case Operation_type::IF:
+                std::cout << "Op If\n";
+                break;
+            case Operation_type::ELSE:
+                std::cout << "Op Else\n";
+                break;
+            case Operation_type::RETURN:
+                std::cout << "Op Return\n";
+                break;
+            case Operation_type::FOR:
+                std::cout << "Op For\n";
+                break;
+            case Operation_type::WHILE:
+                std::cout << "Op While\n";
+                break;
+            default:
+                std::cout << "Unknown Operation_type\n";
+        }
+    }
+    else if constexpr (std::is_same_v<T, Var_type>) {
+        switch (foo) {
+            case Var_type::INTEGER:
+                std::cout << "Var Integer\n";
+                break;
+            case Var_type::STRING:
+                std::cout << "Var String\n";
+                break;
+            case Var_type::DOUBLE:
+                std::cout << "Var Double\n";
+                break;
+            case Var_type::EMPTY:
+                std::cout << "Var Empty\n";
+                break;
+            default:
+                std::cout << "Unknown Var_type\n";
+        }
+    }
+    else {
+        std::cout << "Unknown type\n";
+    }
+}
+
+    void debug_vector()
+    {
+        std::cout<<"Information on all the vectors so far: \n";
+        for (int i = 0 ; i < Op_Store.size() ; i++)
+        {
+            std::cout<<"information on vector Operation "<<i<<"\n\t";
+            print_type(Op_Store[i].type);
+            std::cout<<"\t"<<Op_Store[i].line<<std::endl;
+            std::cout<<"\t"<<Op_Store[i].char_position<<std::endl;
+            std::cout<<"\t"<<Op_Store[i].line_number<<std::endl;
+            std::cout<<"\n";
+        }
+        
+       std::cout<<std::endl;
+
+        for (int i = 0 ; i < Var_Store.size() ; i++)
+        {
+            std::cout<<"information on vector variable "<<i<<"\n";
+            std::cout<<"\t"<<Var_Store[i].line<<std::endl;
+            std::cout<<"\t"<<Var_Store[i].char_position<<std::endl;
+            std::cout<<"\t"<<Var_Store[i].line_number<<std::endl;
+        }
+
     }
 
 };
@@ -222,6 +324,7 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
             
             if(n > line_count)
             {
+                std::cout<<"error";
                 return NULL;
             }
             int current = 0;
@@ -230,8 +333,11 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
             {
                 if(current == n)
                 {
+                    std::cout<<n<<"\n";
+                    std::cout<<result;
                     return result;
                 }
+                std::cout<<n<<"\n";
                 current++;
             }
             
@@ -274,11 +380,13 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
         struct Variable_Locate Find_Var(std::string line) //this checks if there contains any variable keywords, if none returns empty.
         {
             struct Variable_Locate temp;
+            std::cout<<line<<"\n";
             for (int i = 0 ; i < 3 ; i++)
             {
                 std::size_t found = line.find(keywords[i]);
                 if ( found != std::string::npos)
                 {
+                    
                     if(line[found + keywords[i].size()] != ' '); //if the character after the word is not a space we discard.
                     {
                         continue;
@@ -433,6 +541,7 @@ int main(int argc, char** argv) //has 2 arguments, one for filepath to cpp file 
     }
 
     assemble.parser();
+    assemble.debug_vector();
 
     
 }
@@ -490,3 +599,6 @@ inline void MIPS::coder() //this will read the stuff in the 2 vectors and actual
 // integer will be added into the vector map with value 0
 // afterwards will need a function to searchfor the name of that variable anywhere after the point where it was initialized.
 //oh wait no need can just call a function to search for name of a variable that is used after any operation.
+
+
+//21/09 error: getline function not working at all ... 

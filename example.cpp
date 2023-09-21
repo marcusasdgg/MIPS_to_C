@@ -1,9 +1,8 @@
-hello bro
-suppp
-__TIMESTAMP__test
-__cpp_raw_strings
-__TIMESTAMP__
-static_asserta
-
-asdasdas
-
+int 
+double 
+string 
+if 
+else 
+while 
+printf(
+scanf(
