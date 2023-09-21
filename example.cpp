@@ -1,8 +1,1 @@
-int 
-double 
-string 
-if 
-else 
-while 
-printf(
-scanf(
+if int = 3

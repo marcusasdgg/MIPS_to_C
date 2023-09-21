@@ -44,6 +44,7 @@ enum class Operation_type
     RETURN,
     FOR,
     WHILE,
+    EQUAL,
 };
 
 struct Variable_Locate
@@ -141,6 +142,7 @@ public:
         keywords.push_back("while");
         keywords.push_back("if");
         keywords.push_back("else");
+        keywords.push_back("=");
         keywords.push_back("{");
         keywords.push_back("}");
 
@@ -166,7 +168,7 @@ public:
 
     bool if_open()
     {
-        return open_state;
+        return infile.is_open();
     }
 
 
@@ -225,6 +227,9 @@ void print_type(T foo)
             case Operation_type::WHILE:
                 std::cout << "Op While\n";
                 break;
+            case Operation_type::EQUAL:
+                std::cout<<"Op equal\n";
+                break;
             default:
                 std::cout << "Unknown Operation_type\n";
         }
@@ -254,25 +259,29 @@ void print_type(T foo)
 
     void debug_vector()
     {
-        std::cout<<"Information on all the vectors so far: \n";
+        std::cout<<"Information on all the vectors so far: \n\n";
+
+        std::cout<<"\tfound "<<Op_Store.size()<<" operations.\n\n";
         for (int i = 0 ; i < Op_Store.size() ; i++)
         {
             std::cout<<"information on vector Operation "<<i<<"\n\t";
             print_type(Op_Store[i].type);
-            std::cout<<"\t"<<Op_Store[i].line<<std::endl;
-            std::cout<<"\t"<<Op_Store[i].char_position<<std::endl;
-            std::cout<<"\t"<<Op_Store[i].line_number<<std::endl;
+            std::cout<<"\tline data: "<<Op_Store[i].line<<std::endl;
+            std::cout<<"\tstart char position in line: "<<Op_Store[i].char_position<<std::endl;
+            std::cout<<"\tline number in file: "<<Op_Store[i].line_number<<std::endl;
             std::cout<<"\n";
         }
         
        std::cout<<std::endl;
 
+        std::cout<<"\tfound "<<Var_Store.size()<<" variables.\n\n";
         for (int i = 0 ; i < Var_Store.size() ; i++)
         {
             std::cout<<"information on vector variable "<<i<<"\n";
-            std::cout<<"\t"<<Var_Store[i].line<<std::endl;
-            std::cout<<"\t"<<Var_Store[i].char_position<<std::endl;
-            std::cout<<"\t"<<Var_Store[i].line_number<<std::endl;
+            std::cout<<"\tline data: "<<Var_Store[i].line<<std::endl;
+            std::cout<<"\tstart char position in line: "<<Var_Store[i].char_position<<std::endl;
+            std::cout<<"\tline number in file: "<<Var_Store[i].line_number<<std::endl;
+            std::cout<<"\n";
         }
 
     }
@@ -319,25 +328,29 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
             }
         }
 
-        std::string get_line(int n)
+        std::string get_line(int n) //issue is the getline(infile,result) aint even instantiating which means something wrong with the file itself?
         {
-            
+             
+            if (!infile.is_open())
+            {
+                std::cout<<"not open";
+                return NULL;
+            }
             if(n > line_count)
             {
-                std::cout<<"error";
+                std::cout<<"error accessing uninitialized line";
                 return NULL;
             }
             int current = 0;
             std::string result;
+            infile.clear();
+            infile.seekg(0); 
             while(getline(infile,result))
             {
                 if(current == n)
                 {
-                    std::cout<<n<<"\n";
-                    std::cout<<result;
                     return result;
                 }
-                std::cout<<n<<"\n";
                 current++;
             }
             
@@ -380,14 +393,13 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
         struct Variable_Locate Find_Var(std::string line) //this checks if there contains any variable keywords, if none returns empty.
         {
             struct Variable_Locate temp;
-            std::cout<<line<<"\n";
             for (int i = 0 ; i < 3 ; i++)
             {
                 std::size_t found = line.find(keywords[i]);
                 if ( found != std::string::npos)
                 {
                     
-                    if(line[found + keywords[i].size()] != ' '); //if the character after the word is not a space we discard.
+                    if(line[found + keywords[i].size()] != ' ') //if the character after the word is not a space we discard.
                     {
                         continue;
                     }
@@ -418,6 +430,7 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
                     
                 }
             }
+
             return temp;
         }
 
@@ -492,9 +505,15 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
                         temp.type = Operation_type::ELSE;
                         return temp;
                     case 13:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::EQUAL;
                         return temp;
                         break;
                     case 14:
+                        return temp;
+                        break;
+                    case 15:
                         return temp;
                         break;
                     default:
@@ -508,6 +527,8 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
         }
 
         void parser(); //parses text in the input file into a vector of either operations or variable assigning
+
+        void variable_assign();
 
         void coder(); //adds the represented vectors as mips assembly in the output file.
 
@@ -540,6 +561,7 @@ int main(int argc, char** argv) //has 2 arguments, one for filepath to cpp file 
         return 1;
     }
 
+    
     assemble.parser();
     assemble.debug_vector();
 
@@ -575,6 +597,14 @@ inline void MIPS::parser()//here comes the hard part, searching for "key words l
     }
 }
 
+
+inline void MIPS::variable_assign()
+{
+
+}
+
+
+
 inline void MIPS::coder() //this will read the stuff in the 2 vectors and actually start adding the assembly in to the out file. bfore we finish this need to add in assembly for printf etc. initiazlie variable.
 {
     // std::vector<struct Operation_Locate> Op_Store;
@@ -601,4 +631,8 @@ inline void MIPS::coder() //this will read the stuff in the 2 vectors and actual
 //oh wait no need can just call a function to search for name of a variable that is used after any operation.
 
 
-//21/09 error: getline function not working at all ... 
+//21/09 error: getline function not working at all ... now working, added a ; to if...
+
+//steps to do now: write a function that takes in the vector of variables then adds it into the map with the name and int value. afterwards function overload a couple times to do for double and string.
+//okay now there is a problem, it is not reading the = in my current example.cpp this is due to the find_op function only capable of returning 1 type operation in this case if and not =, 
+// to fix this we can try just make a vector of structure and then return that and then deal with that instead.
