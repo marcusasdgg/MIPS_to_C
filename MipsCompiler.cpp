@@ -126,26 +126,37 @@ public:
         
         //add possible keywords to search for in the parse.
 
-        keywords.push_back("int");
-        keywords.push_back("string");
-        keywords.push_back("double");
+        keywords.push_back("int"); //index 0
+        keywords.push_back("string"); //index 1 //function to find implemented find_var
+        keywords.push_back("double"); //index 2
 
-        keywords.push_back("printf(");
-        keywords.push_back("scanf(");
+        keywords.push_back("printf");//index 3 //function to find implemented_op
+        keywords.push_back("scanf"); //index 4
 
-        keywords.push_back("+");
-        keywords.push_back("-");
-        keywords.push_back("/");
-        keywords.push_back("%");
+        keywords.push_back("+");//index 5
+        keywords.push_back("-");//index 6  //function to find implemented find_op
+        keywords.push_back("/");//index 7
+        keywords.push_back("%");//index 8
 
-        keywords.push_back("return");
-        keywords.push_back("while");
-        keywords.push_back("if");
-        keywords.push_back("else");
-        keywords.push_back("=");
-        keywords.push_back("{");
-        keywords.push_back("}");
+        keywords.push_back("return");//index 9
+        keywords.push_back("while");//index 10
+        keywords.push_back("if");//index 11 //function to find implemented find_op will make a new one in future
+        keywords.push_back("else");//index 12
+        
+        keywords.push_back("{");//index 13
+        keywords.push_back("}");//index 14 //not yet implemented
 
+        keywords.push_back("=");//index 15
+        keywords.push_back("<");//index 16
+        keywords.push_back(">");//index 17 //not yet implemented
+        keywords.push_back("<=");//index 18
+        keywords.push_back(">=");//index 19
+
+        keywords.push_back("(");//index 13
+        keywords.push_back(")");//index 14 //not yet implemented
+
+        keywords.push_back("["); //index 15 //not yet implemented
+        keywords.push_back("]"); //index 16
     }
 
 //these are all the output functions, i.e adds to the a.out
@@ -433,8 +444,9 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
 
             return temp;
         }
+ 
+        struct Operation_Locate Find_Op(std::string line) //checks if any contains any operation keywords (including variables) returns the enum for that else returns empty. alright no now we are returning an array of structs, this is because
 
-        struct Operation_Locate Find_Op(std::string line) //checks if any contains any operation keywords (including variables) returns the enum for that else returns empty.
         {
             struct Operation_Locate temp;
             for (int i = 3 ; i < 15 ; i++)
@@ -636,3 +648,4 @@ inline void MIPS::coder() //this will read the stuff in the 2 vectors and actual
 //steps to do now: write a function that takes in the vector of variables then adds it into the map with the name and int value. afterwards function overload a couple times to do for double and string.
 //okay now there is a problem, it is not reading the = in my current example.cpp this is due to the find_op function only capable of returning 1 type operation in this case if and not =, 
 // to fix this we can try just make a vector of structure and then return that and then deal with that instead.
+//ok hwo about this, we create a 3rd function just for equality, inequality, and < and > this is a lot easier than searching for multiple keywords.
