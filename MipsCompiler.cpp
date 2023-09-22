@@ -464,13 +464,6 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
         {
             return true;
         }
-        
-
-        void parser(); //parses text in the input file into a vector of either operations or variable assigning
-
-        void variable_assign();
-
-        void coder(); //adds the represented vectors as mips assembly in the output file.
 
         template<typename t> //okay control structure of this thing.
 t Find_Thing(std::string line) //this returns back a vector, also we need to declare the type before usage remember.
@@ -704,6 +697,15 @@ t Find_Thing(std::string line) //this returns back a vector, also we need to dec
     }
     return vector;
 }
+        
+
+        void parser(); //parses text in the input file into a vector of either operations or variable assigning
+
+        void variable_assign();
+
+        void coder(); //adds the represented vectors as mips assembly in the output file.
+
+        
 
 };
 
@@ -745,18 +747,27 @@ int main(int argc, char** argv) //has 2 arguments, one for filepath to cpp file 
 inline void MIPS::parser()//here comes the hard part, searching for "key words like int, double, string printf etc."
 { //need to write in support for new find_thing template function that returns in a vector of find results.
     std::string current_line;
-    std::vector<Operation_Locate> Temp_Op;
-    std::vector<Variable_Locate> Temp_Var;
-    std::vector<Equality_Locate> Temp_Equ;
-    std::vector<Math_Locate> Temp_Mat;
+    
 
 
     for(int i = 0 ; i < line_count ; i++)
     {
         current_line = get_line(i);
+        std::vector<Operation_Locate> Temp_Op;
+        std::vector<Variable_Locate> Temp_Var;
+        std::vector<Equality_Locate> Temp_Equ;
+        std::vector<Math_Locate> Temp_Mat;
 
-        
-        //error need to fix: return type of findop and findvar need to be the struct to carry more info
+
+        Temp_Op = Find_Thing<std::vector<Operation_Locate>>(current_line);
+        Temp_Var = Find_Thing<std::vector<Variable_Locate>>(current_line);
+        Temp_Equ = Find_Thing<std::vector<Equality_Locate>>(current_line);
+        Temp_Mat = Find_Thing<std::vector<Math_Locate>>(current_line);
+
+        for(auto value : Temp_Op)
+        {
+            
+        }
         
     }
 }
