@@ -1,0 +1,174 @@
+struct Variable_Locate Find_Var(std::string line) //this checks if there contains any variable keywords, if none returns empty.
+        {
+            struct Variable_Locate temp;
+            for (int i = 0 ; i < 3 ; i++)
+            {
+                std::size_t found = line.find(keywords[i]);
+                if ( found != std::string::npos)
+                {
+                    
+                    if(line[found + keywords[i].size()] != ' ') //if the character after the word is not a space we discard.
+                    {
+                        continue;
+                    }
+                    switch(i)
+                    {
+                        case 0:
+                            temp.char_position = found;
+                            temp.line = line;
+                            temp.type = Var_type::INTEGER;
+                            return temp;
+                        break;
+                        
+                        case 1:
+                            temp.char_position = found;
+                            temp.line = line;
+                            temp.type = Var_type::STRING;
+                            return temp;
+                        break;
+
+                        case 2:
+                            temp.char_position = found;
+                            temp.line = line;
+                            temp.type = Var_type::DOUBLE;
+                            return temp;
+                        break;
+
+                    }
+                    
+                }
+            }
+
+            return temp;
+        }
+ 
+        struct Operation_Locate Find_Op(std::string line) //checks if any contains any operation keywords (including variables) returns the enum for that else returns empty. alright no now we are returning an array of structs, this is because
+
+        {
+            struct Operation_Locate temp;
+            for (int i = 3 ; i < 9 ; i++)
+            {
+                std::size_t found = line.find(keywords[i]);
+                if ( found != std::string::npos)
+                {
+                    if (i ==  3)
+                    {
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::PRINTF;
+                        return temp;
+                    }
+                    if (i == 4)
+                    {
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::SCANF;
+                        return temp;
+                    }
+
+                    if (line[found + keywords[i].size()] != ' ')
+                    {
+                        continue;
+                    }
+                    
+                    switch (i)
+                    {
+                    case 5:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::RETURN;
+                        return temp;
+                    case 6:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::WHILE;
+                        return temp;
+                    case 7:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::IF;
+                        return temp;
+                    case 8:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Operation_type::ELSE;
+                        return temp;
+                    default:
+                        break;
+                    }
+                    
+                }
+            }
+            return temp;
+
+        }
+
+        struct Equality_Locate Find_Eq(std::string line)
+        {
+            struct Equality_Locate temp;
+            for (int i = 11 ; i < 16 ; i++)
+            {
+                std::size_t found = line.find(keywords[i]);
+                if ( found != std::string::npos)
+                {
+                    if (line[found + keywords[i].size()] != ' ')
+                    {
+                        continue;
+                    }
+
+                    switch (i)
+                    {
+                        case 11:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Equ_type::EQUAL;
+                        return temp;
+                        case 12:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Equ_type::SMALLER;
+                        return temp;
+                        case 13:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Equ_type::BIGGER;
+                        return temp;
+                        case 14:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Equ_type::SMALLER_EQUAL;
+                        return temp;
+                        case 15:
+                        temp.line = line;
+                        temp.char_position = found;
+                        temp.type = Equ_type::BIGGER_EQUAL;
+                        return temp;
+                        default:
+                            break;
+                    }
+                }
+                
+            }
+            return temp;
+        }
+
+        struct Math_Locate Find_Mat(std::string line)
+        {
+            struct Math_Locate temp;
+        }   
+
+        struct Round_Locate Find_Locate(std::string line)
+        {
+            struct Round_Locate temp;
+        }
+        
+        
+        struct Square_Locate Find_Square(std::string line)
+        {
+            struct Square_Locate temp;
+        }
+
+        struct Squiggly_Locate Find_Squigglyt(std::string line)
+        {
+            struct Squiggly_Locate temp;
+        }

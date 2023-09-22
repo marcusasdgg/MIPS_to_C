@@ -239,12 +239,12 @@ public:
         
         //add possible keywords to search for in the parse.
 
-        keywords.push_back("int"); //index 0
-        keywords.push_back("string"); //index 1 //function to find implemented find_var
-        keywords.push_back("double"); //index 2
+        keywords.push_back("int "); //index 0
+        keywords.push_back("string "); //index 1 //function to find implemented find_var
+        keywords.push_back("double "); //index 2
 
-        keywords.push_back("printf");//index 3 //function to find implemented_op
-        keywords.push_back("scanf"); //index 4
+        keywords.push_back("printf(");//index 3 //function to find implemented_op
+        keywords.push_back("scanf("); //index 4
 
 
         keywords.push_back("return");//index 5
@@ -516,180 +516,7 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
         {
             return true;
         }
-        struct Variable_Locate Find_Var(std::string line) //this checks if there contains any variable keywords, if none returns empty.
-        {
-            struct Variable_Locate temp;
-            for (int i = 0 ; i < 3 ; i++)
-            {
-                std::size_t found = line.find(keywords[i]);
-                if ( found != std::string::npos)
-                {
-                    
-                    if(line[found + keywords[i].size()] != ' ') //if the character after the word is not a space we discard.
-                    {
-                        continue;
-                    }
-                    switch(i)
-                    {
-                        case 0:
-                            temp.char_position = found;
-                            temp.line = line;
-                            temp.type = Var_type::INTEGER;
-                            return temp;
-                        break;
-                        
-                        case 1:
-                            temp.char_position = found;
-                            temp.line = line;
-                            temp.type = Var_type::STRING;
-                            return temp;
-                        break;
-
-                        case 2:
-                            temp.char_position = found;
-                            temp.line = line;
-                            temp.type = Var_type::DOUBLE;
-                            return temp;
-                        break;
-
-                    }
-                    
-                }
-            }
-
-            return temp;
-        }
- 
-        struct Operation_Locate Find_Op(std::string line) //checks if any contains any operation keywords (including variables) returns the enum for that else returns empty. alright no now we are returning an array of structs, this is because
-
-        {
-            struct Operation_Locate temp;
-            for (int i = 3 ; i < 9 ; i++)
-            {
-                std::size_t found = line.find(keywords[i]);
-                if ( found != std::string::npos)
-                {
-                    if (i ==  3)
-                    {
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Operation_type::PRINTF;
-                        return temp;
-                    }
-                    if (i == 4)
-                    {
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Operation_type::SCANF;
-                        return temp;
-                    }
-
-                    if (line[found + keywords[i].size()] != ' ')
-                    {
-                        continue;
-                    }
-                    
-                    switch (i)
-                    {
-                    case 5:
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Operation_type::RETURN;
-                        return temp;
-                    case 6:
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Operation_type::WHILE;
-                        return temp;
-                    case 7:
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Operation_type::IF;
-                        return temp;
-                    case 8:
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Operation_type::ELSE;
-                        return temp;
-                    default:
-                        break;
-                    }
-                    
-                }
-            }
-            return temp;
-
-        }
-
-        struct Equality_Locate Find_Eq(std::string line)
-        {
-            struct Equality_Locate temp;
-            for (int i = 11 ; i < 16 ; i++)
-            {
-                std::size_t found = line.find(keywords[i]);
-                if ( found != std::string::npos)
-                {
-                    if (line[found + keywords[i].size()] != ' ')
-                    {
-                        continue;
-                    }
-
-                    switch (i)
-                    {
-                        case 11:
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Equ_type::EQUAL;
-                        return temp;
-                        case 12:
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Equ_type::SMALLER;
-                        return temp;
-                        case 13:
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Equ_type::BIGGER;
-                        return temp;
-                        case 14:
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Equ_type::SMALLER_EQUAL;
-                        return temp;
-                        case 15:
-                        temp.line = line;
-                        temp.char_position = found;
-                        temp.type = Equ_type::BIGGER_EQUAL;
-                        return temp;
-                        default:
-                            break;
-                    }
-                }
-                
-            }
-            return temp;
-        }
-
-        struct Math_Locate Find_Mat(std::string line)
-        {
-            struct Math_Locate temp;
-        }   
-
-        struct Round_Locate Find_Locate(std::string line)
-        {
-            struct Round_Locate temp;
-        }
         
-        
-        struct Square_Locate Find_Square(std::string line)
-        {
-            struct Square_Locate temp;
-        }
-
-        struct Squiggly_Locate Find_Squigglyt(std::string line)
-        {
-            struct Squiggly_Locate temp;
-        }
 
         void parser(); //parses text in the input file into a vector of either operations or variable assigning
 
@@ -737,8 +564,8 @@ int main(int argc, char** argv) //has 2 arguments, one for filepath to cpp file 
 inline void MIPS::parser()//here comes the hard part, searching for "key words like int, double, string printf etc."
 {
     std::string current_line;
-    struct Operation_Locate Op;
-    struct Variable_Locate Var;
+    Operation_Locate Op;
+    Variable_Locate Var;
     for(int i = 0 ; i < line_count ; i++)
     {
         current_line = get_line(i);
@@ -760,6 +587,14 @@ inline void MIPS::parser()//here comes the hard part, searching for "key words l
         //error need to fix: return type of findop and findvar need to be the struct to carry more info
         
     }
+}
+
+template<typename t>
+t Find_Thing(std::string line) //this returns back a vector, also we need to declare the type before usage remember.
+{
+    t vector;
+
+    return t vector;
 }
 
 
@@ -802,3 +637,6 @@ inline void MIPS::coder() //this will read the stuff in the 2 vectors and actual
 //okay now there is a problem, it is not reading the = in my current example.cpp this is due to the find_op function only capable of returning 1 type operation in this case if and not =, 
 // to fix this we can try just make a vector of structure and then return that and then deal with that instead.
 //ok hwo about this, we create a 3rd function just for equality, inequality, and < and > this is a lot easier than searching for multiple keywords.
+
+//alright now i have a decision to make, i have another solution that i can implement, which is to remove that word from the string and have a int counter showing new position.
+
