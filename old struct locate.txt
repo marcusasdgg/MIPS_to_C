@@ -172,3 +172,28 @@ struct Variable_Locate Find_Var(std::string line) //this checks if there contain
         {
             struct Squiggly_Locate temp;
         }
+
+        keywords.push_back("int "); //index 0
+        keywords.push_back("string "); //index 1 //function to find implemented find_var
+        keywords.push_back("double "); //index 2
+
+        keywords.push_back("printf(");//index 3 //function to find implemented_op
+        keywords.push_back("scanf("); //index 4
+
+
+        keywords.push_back("return");//index 5
+        keywords.push_back("while");//index 6
+        keywords.push_back("if");//index 7 //function to find implemented find_op will make a new one in future
+        keywords.push_back("else");//index 8
+    
+        keywords.push_back("=");//index 9
+        keywords.push_back("<");//index 10
+        keywords.push_back(">");//index 11 //not yet implemented
+        keywords.push_back("<=");//index 12
+        keywords.push_back(">=");//index 13
+
+        keywords.push_back("+");//index 14
+        keywords.push_back("-");//index 15  //not yet implmented
+        keywords.push_back("/");//index 16
+        keywords.push_back("*");//index 17
+        keywords.push_back("%");//index 18
