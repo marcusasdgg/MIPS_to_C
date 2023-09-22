@@ -197,3 +197,266 @@ struct Variable_Locate Find_Var(std::string line) //this checks if there contain
         keywords.push_back("/");//index 16
         keywords.push_back("*");//index 17
         keywords.push_back("%");//index 18
+
+        template<typename t> //okay control structure of this thing.
+t Find_Thing(std::string line) //this returns back a vector, also we need to declare the type before usage remember.
+{   //alright figured out that we can infer the (,),{,},[,] symbols later.
+    int char_pos = 0;
+    t vector;
+    //i.e t is the type std::vector<variable_locate>
+    //it then returns vector which is variable locate
+    int i = 0;
+
+    if (typeid(t) == typeid(std::vector<Variable_Locate>))
+    {
+        i = 0;
+    }
+
+    else if (typeid(t) == typeid(std::vector<Math_Locate>))
+    {
+        i = 14;
+    }
+
+    else if (typeid(t) == typeid(std::vector<Equality_Locate>))
+    {
+        i = 9;
+    }
+
+    else if (typeid(t) == typeid(std::vector<Operation_Locate>))
+    {
+        i = 3;
+    }
+
+
+
+    while(true)
+    {
+        std::size_t found = line.find(keywords[i],char_pos);
+        if (found == std::string::npos)
+        {
+            i++;
+        }   
+
+        if(char_pos > line.size())
+        {
+            return vector;
+        }
+
+        if (typeid(t) == typeid(std::vector<Variable_Locate>))
+        {
+            std::cout<<"variable locate called\n";
+            if (i > 2)
+            {
+                return vector;
+            }
+            Variable_Locate temp_var;
+            switch(i)
+                {
+                    case 0:
+                    temp_var.char_position = found;
+                    temp_var.line = line;
+                    temp_var.type = Var_type::INTEGER;
+                    vector.push_back(temp_var);
+                    char_pos = found + keywords[i].size() + 1;
+                    break;
+                        
+                    case 1:
+                    temp_var.char_position = found;
+                    temp_var.line = line;
+                    temp_var.type = Var_type::STRING;
+                    vector.push_back(temp_var);
+                    char_pos = found + keywords[i].size() + 1;
+                    break;
+
+                    case 2:
+                    temp_var.char_position = found;
+                    temp_var.line = line;
+                    temp_var.type = Var_type::DOUBLE;
+                    vector.push_back(temp_var);
+                    char_pos = found + keywords[i].size() + 1;
+                    break;
+        }
+        }
+
+        else if (typeid(t) == typeid(std::vector<Math_Locate>))
+        {
+            std::cout<<"math locate called\n";
+            Math_Locate temp_mat;
+            if (i < 14 || i > 18)
+            {
+                return vector;
+            }
+
+            switch(i)
+            {
+                case 14:
+                temp_mat.char_position = found;
+                temp_mat.line = line;
+                temp_mat.type = Mat_type::ADD;
+                vector.push_back(temp_mat);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+                case 15:
+                temp_mat.char_position = found;
+                temp_mat.line = line;
+                temp_mat.type = Mat_type::SUBTRACT;
+                vector.push_back(temp_mat);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+                case 16:
+                temp_mat.char_position = found;
+                temp_mat.line = line;
+                temp_mat.type = Mat_type::DIVIDE;
+                vector.push_back(temp_mat);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+                case 17:
+                temp_mat.char_position = found;
+                temp_mat.line = line;
+                temp_mat.type = Mat_type::MULTIPLY;
+                vector.push_back(temp_mat);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+                case 18:
+                temp_mat.char_position = found;
+                temp_mat.line = line;
+                temp_mat.type = Mat_type::MOD;
+                vector.push_back(temp_mat);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+            }
+        }
+
+        else if (typeid(t) == typeid(std::vector<Equality_Locate>))
+        {
+            std::cout<<"equ locate called\n";
+            Equality_Locate temp_equ;
+            if (i < 9 || i > 13)
+            {
+                return vector;
+            }
+
+            switch (i)
+            {
+                case 9:
+                temp_equ.char_position = found;
+                temp_equ.line = line;
+                temp_equ.type = Equ_type::EQUAL;
+                vector.push_back(temp_equ);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+
+                case 10:
+                temp_equ.char_position = found;
+                temp_equ.line = line;
+                temp_equ.type = Equ_type::SMALLER;
+                vector.push_back(temp_equ);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+
+                case 11:
+                temp_equ.char_position = found;
+                temp_equ.line = line;
+                temp_equ.type = Equ_type::BIGGER;
+                vector.push_back(temp_equ);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+
+                case 12:
+                temp_equ.char_position = found;
+                temp_equ.line = line;
+                temp_equ.type = Equ_type::SMALLER_EQUAL;
+                vector.push_back(temp_equ);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+
+                case 13:
+                temp_equ.char_position = found;
+                temp_equ.line = line;
+                temp_equ.type = Equ_type::BIGGER_EQUAL;
+                vector.push_back(temp_equ);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+            }
+        }
+
+        else if (typeid(t) == typeid(std::vector<Operation_Locate>))
+        {
+            std::cout<<"oper locate called\n";
+            Operation_Locate temp_Op;
+            if (i < 3 || i > 8)
+            {
+                return vector;
+            }
+
+            switch (i)
+            {
+                case 3:
+                temp_Op.char_position = found;
+                temp_Op.line = line;
+                temp_Op.type = Operation_type::PRINTF;
+                vector.push_back(temp_Op);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+                case 5:
+                temp_Op.char_position = found;
+                temp_Op.line = line;
+                temp_Op.type = Operation_type::SCANF;
+                vector.push_back(temp_Op);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+                case 6:
+                temp_Op.char_position = found;
+                temp_Op.line = line;
+                temp_Op.type = Operation_type::RETURN;
+                vector.push_back(temp_Op);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+                case 7:
+                temp_Op.char_position = found;
+                temp_Op.line = line;
+                temp_Op.type = Operation_type::IF;
+                vector.push_back(temp_Op);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+                case 8:
+                temp_Op.char_position = found;
+                temp_Op.line = line;
+                temp_Op.type = Operation_type::ELSE;
+                vector.push_back(temp_Op);
+                char_pos = found + keywords[i].size() + 1;
+                break;
+            }
+        }
+        
+
+    }
+
+    
+    
+    return vector;
+}
+
+
+
+  if (typeid(t) == typeid(std::vector<Variable_Locate>))
+    {
+        i = 0;
+    }
+
+    else if (typeid(t) == typeid(std::vector<Math_Locate>))
+    {
+        i = 14;
+    }
+
+    else if (typeid(t) == typeid(std::vector<Equality_Locate>))
+    {
+        i = 9;
+    }
+
+    else if (typeid(t) == typeid(std::vector<Operation_Locate>))
+    {
+        i = 3;
+    }
+
+

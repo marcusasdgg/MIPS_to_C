@@ -141,6 +141,13 @@ struct Operation_Locate
 };
 
 
+struct Everything_Locate
+{
+    std::vector<Operation_Locate> Temp_Op_Store;
+    std::vector<Variable_Locate> Temp_Var_Store;
+    std::vector<Equality_Locate> Temp_Equ_Store;
+    std::vector<Math_Locate> Temp_Mat_Store;
+};
 class File//need to create a file reader as well to parse all the lines from the input c file.
 {
 public:
@@ -268,21 +275,6 @@ void print_type(T foo)
             case Operation_type::ASSIGN_VARIABLE:
                 std::cout << "Op Assign Variable\n";
                 break;
-            // case Operation_type::ADD:
-            //     std::cout << "Op Addition\n";
-            //     break;
-            // case Operation_type::SUBTRACT:
-            //     std::cout << "Op Subtract\n";
-            //     break;
-            // case Operation_type::MULTIPLY:
-            //     std::cout << "Op Multiply\n";
-            //     break;
-            // case Operation_type::DIVIDE:
-            //     std::cout << "Op Divide\n";
-            //     break;
-            // case Operation_type::MOD:
-            //     std::cout << "Op Mod\n";
-            //     break;
             case Operation_type::EMPTY:
                 std::cout << "Op Empty\n";
                 break;
@@ -301,9 +293,6 @@ void print_type(T foo)
             case Operation_type::WHILE:
                 std::cout << "Op While\n";
                 break;
-            // case Operation_type::EQUAL:
-            //     std::cout<<"Op equal\n";
-            //     break;
             default:
                 std::cout << "Unknown Operation_type\n";
         }
@@ -465,55 +454,29 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
             return true;
         }
 
-        template<typename t> //okay control structure of this thing.
-t Find_Thing(std::string line) //this returns back a vector, also we need to declare the type before usage remember.
+         //okay control structure of this thing.
+ Everything_Locate Find_Thing(std::string line) //this returns back a vector, also we need to declare the type before usage remember.
 {   //alright figured out that we can infer the (,),{,},[,] symbols later.
     int char_pos = 0;
-    t vector;
-    
+    Everything_Locate vector;
+    //i.e t is the type std::vector<variable_locate>
+    //it then returns vector which is variable locate
     int i = 0;
 
-    if (typeid(t) == typeid(std::vector<Variable_Locate>))
+    while(i < 18)
     {
-        i = 0;
-    }
-
-    if (typeid(t) == typeid(std::vector<Math_Locate>))
-    {
-        i = 14;
-    }
-
-    if (typeid(t) == typeid(std::vector<Equality_Locate>))
-    {
-        i = 9;
-    }
-
-    if (typeid(t) == typeid(std::vector<Operation_Locate>))
-    {
-        i = 3;
-    }
-
-
-
-    while(true)
-    {
+        std::cout<<i<<"th current char position"<<char_pos<<"\n";
         std::size_t found = line.find(keywords[i],char_pos);
         if (found == std::string::npos)
         {
             i++;
         }   
 
-        if(char_pos > line.size())
+        if(char_pos >= line.size())
         {
             return vector;
         }
 
-        if (typeid(t) == typeid(std::vector<Variable_Locate>))
-        {
-            if (i > 2)
-            {
-                return vector;
-            }
             Variable_Locate temp_var;
             switch(i)
                 {
@@ -521,7 +484,7 @@ t Find_Thing(std::string line) //this returns back a vector, also we need to dec
                     temp_var.char_position = found;
                     temp_var.line = line;
                     temp_var.type = Var_type::INTEGER;
-                    vector.pushback(temp_var);
+                    vector.Temp_Var_Store.push_back(temp_var);
                     char_pos = found + keywords[i].size() + 1;
                     break;
                         
@@ -529,7 +492,7 @@ t Find_Thing(std::string line) //this returns back a vector, also we need to dec
                     temp_var.char_position = found;
                     temp_var.line = line;
                     temp_var.type = Var_type::STRING;
-                    vector.pushback(temp_var);
+                    vector.Temp_Var_Store.push_back(temp_var);
                     char_pos = found + keywords[i].size() + 1;
                     break;
 
@@ -537,66 +500,55 @@ t Find_Thing(std::string line) //this returns back a vector, also we need to dec
                     temp_var.char_position = found;
                     temp_var.line = line;
                     temp_var.type = Var_type::DOUBLE;
-                    vector.pushback(temp_var);
+                    vector.Temp_Var_Store.push_back(temp_var);
                     char_pos = found + keywords[i].size() + 1;
                     break;
         }
+        
 
-        if (typeid(t) == typeid(std::vector<Math_Locate>))
-        {
+
             Math_Locate temp_mat;
-            if (i < 14 || i > 18)
-            {
-                return vector;
-            }
-
             switch(i)
             {
                 case 14:
                 temp_mat.char_position = found;
                 temp_mat.line = line;
                 temp_mat.type = Mat_type::ADD;
-                vector.pushback(temp_mat);
+                vector.Temp_Mat_Store.push_back(temp_mat);
                 char_pos = found + keywords[i].size() + 1;
                 break;
                 case 15:
                 temp_mat.char_position = found;
                 temp_mat.line = line;
                 temp_mat.type = Mat_type::SUBTRACT;
-                vector.pushback(temp_mat);
+                vector.Temp_Mat_Store.push_back(temp_mat);
                 char_pos = found + keywords[i].size() + 1;
                 break;
                 case 16:
                 temp_mat.char_position = found;
                 temp_mat.line = line;
                 temp_mat.type = Mat_type::DIVIDE;
-                vector.pushback(temp_mat);
+                vector.Temp_Mat_Store.push_back(temp_mat);
                 char_pos = found + keywords[i].size() + 1;
                 break;
                 case 17:
                 temp_mat.char_position = found;
                 temp_mat.line = line;
                 temp_mat.type = Mat_type::MULTIPLY;
-                vector.pushback(temp_mat);
+                vector.Temp_Mat_Store.push_back(temp_mat);
                 char_pos = found + keywords[i].size() + 1;
                 break;
                 case 18:
                 temp_mat.char_position = found;
                 temp_mat.line = line;
                 temp_mat.type = Mat_type::MOD;
-                vector.pushback(temp_mat);
+                vector.Temp_Mat_Store.push_back(temp_mat);
                 char_pos = found + keywords[i].size() + 1;
                 break;
             }
-        }
+        
 
-        if (typeid(t) == typeid(std::vector<Equality_Locate>))
-        {
             Equality_Locate temp_equ;
-            if (i < 9 || i > 13)
-            {
-                return vector;
-            }
 
             switch (i)
             {
@@ -604,7 +556,7 @@ t Find_Thing(std::string line) //this returns back a vector, also we need to dec
                 temp_equ.char_position = found;
                 temp_equ.line = line;
                 temp_equ.type = Equ_type::EQUAL;
-                vector.pushback(temp_equ);
+                vector.Temp_Equ_Store.push_back(temp_equ);
                 char_pos = found + keywords[i].size() + 1;
                 break;
 
@@ -612,7 +564,7 @@ t Find_Thing(std::string line) //this returns back a vector, also we need to dec
                 temp_equ.char_position = found;
                 temp_equ.line = line;
                 temp_equ.type = Equ_type::SMALLER;
-                vector.pushback(temp_equ);
+                vector.Temp_Equ_Store.push_back(temp_equ);
                 char_pos = found + keywords[i].size() + 1;
                 break;
 
@@ -620,7 +572,7 @@ t Find_Thing(std::string line) //this returns back a vector, also we need to dec
                 temp_equ.char_position = found;
                 temp_equ.line = line;
                 temp_equ.type = Equ_type::BIGGER;
-                vector.pushback(temp_equ);
+                vector.Temp_Equ_Store.push_back(temp_equ);
                 char_pos = found + keywords[i].size() + 1;
                 break;
 
@@ -628,7 +580,7 @@ t Find_Thing(std::string line) //this returns back a vector, also we need to dec
                 temp_equ.char_position = found;
                 temp_equ.line = line;
                 temp_equ.type = Equ_type::SMALLER_EQUAL;
-                vector.pushback(temp_equ);
+                vector.Temp_Equ_Store.push_back(temp_equ);
                 char_pos = found + keywords[i].size() + 1;
                 break;
 
@@ -636,19 +588,14 @@ t Find_Thing(std::string line) //this returns back a vector, also we need to dec
                 temp_equ.char_position = found;
                 temp_equ.line = line;
                 temp_equ.type = Equ_type::BIGGER_EQUAL;
-                vector.pushback(temp_equ);
+                vector.Temp_Equ_Store.push_back(temp_equ);
                 char_pos = found + keywords[i].size() + 1;
                 break;
             }
-        }
+        
 
-        if (typeid(t) == typeid(std::vector<Operation_Locate>))
-        {
+
             Operation_Locate temp_Op;
-            if (i < 3 || i > 8)
-            {
-                return vector;
-            }
 
             switch (i)
             {
@@ -656,45 +603,45 @@ t Find_Thing(std::string line) //this returns back a vector, also we need to dec
                 temp_Op.char_position = found;
                 temp_Op.line = line;
                 temp_Op.type = Operation_type::PRINTF;
-                vector.pushback(temp_Op);
+                vector.Temp_Op_Store.push_back(temp_Op);
                 char_pos = found + keywords[i].size() + 1;
                 break;
                 case 5:
                 temp_Op.char_position = found;
                 temp_Op.line = line;
                 temp_Op.type = Operation_type::SCANF;
-                vector.pushback(temp_Op);
+                vector.Temp_Op_Store.push_back(temp_Op);
                 char_pos = found + keywords[i].size() + 1;
                 break;
                 case 6:
                 temp_Op.char_position = found;
                 temp_Op.line = line;
                 temp_Op.type = Operation_type::RETURN;
-                vector.pushback(temp_Op);
+                vector.Temp_Op_Store.push_back(temp_Op);
                 char_pos = found + keywords[i].size() + 1;
                 break;
                 case 7:
                 temp_Op.char_position = found;
                 temp_Op.line = line;
                 temp_Op.type = Operation_type::IF;
-                vector.pushback(temp_Op);
+                vector.Temp_Op_Store.push_back(temp_Op);
                 char_pos = found + keywords[i].size() + 1;
                 break;
                 case 8:
                 temp_Op.char_position = found;
                 temp_Op.line = line;
                 temp_Op.type = Operation_type::ELSE;
-                vector.pushback(temp_Op);
+                vector.Temp_Op_Store.push_back(temp_Op);
                 char_pos = found + keywords[i].size() + 1;
                 break;
             }
-        }
+        
         
 
     }
 
     
-    }
+    
     return vector;
 }
         
@@ -747,27 +694,37 @@ int main(int argc, char** argv) //has 2 arguments, one for filepath to cpp file 
 inline void MIPS::parser()//here comes the hard part, searching for "key words like int, double, string printf etc."
 { //need to write in support for new find_thing template function that returns in a vector of find results.
     std::string current_line;
-    
-
 
     for(int i = 0 ; i < line_count ; i++)
     {
+        std::cout<<i<<"th iteration\n";
         current_line = get_line(i);
-        std::vector<Operation_Locate> Temp_Op;
-        std::vector<Variable_Locate> Temp_Var;
-        std::vector<Equality_Locate> Temp_Equ;
-        std::vector<Math_Locate> Temp_Mat;
-
-
-        Temp_Op = Find_Thing<std::vector<Operation_Locate>>(current_line);
-        Temp_Var = Find_Thing<std::vector<Variable_Locate>>(current_line);
-        Temp_Equ = Find_Thing<std::vector<Equality_Locate>>(current_line);
-        Temp_Mat = Find_Thing<std::vector<Math_Locate>>(current_line);
-
-        for(auto value : Temp_Op)
+        Everything_Locate temp = Find_Thing(current_line);
+        for(auto val : temp.Temp_Equ_Store)
         {
-            
+            val.line_number = i;
+            Equ_Store.push_back(val);
         }
+
+        for(auto val : temp.Temp_Mat_Store)
+        {
+            val.line_number = i;
+            Mat_Store.push_back(val);
+        }
+
+        for(auto val : temp.Temp_Op_Store)
+        {
+            val.line_number = i;
+            Op_Store.push_back(val);
+        }
+
+        for(auto val : temp.Temp_Var_Store)
+        {
+            val.line_number = i;
+            Var_Store.push_back(val);
+        }
+
+
         
     }
 }
