@@ -549,7 +549,6 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
         if (val >= line.size())
         {
             count++;
-            std::cout<<count<<" keywords searched and not found\n";
         }
     }
     if (count == keywords.size())
@@ -564,7 +563,6 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
 
         if(found == std::string::npos)
         {
-            std::cout<<" "<<keywords[i]<<"not found\n";
             find[i] = line.size();
             continue;
         }
@@ -654,7 +652,6 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
                 break;
             
         } 
-        std::cout<<keywords[i]<<" found\n";
     }
    }
     
