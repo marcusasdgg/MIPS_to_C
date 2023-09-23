@@ -88,9 +88,6 @@ struct Equality_Locate
     Equality_Locate(Equ_type t, int ln, int cp, const std::string& l)
         : type(t), line_number(ln), char_position(cp), line(l)
     {
-        type = Equ_type::EMPTY;
-        line_number = -1;
-        char_position = -1;
     }
     enum Equ_type type;
     int line_number;
@@ -103,9 +100,6 @@ struct Math_Locate
     Math_Locate(Mat_type t, int ln, int cp, const std::string& l)
         : type(t), line_number(ln), char_position(cp), line(l)
     {
-        type = Mat_type::EMPTY;
-        line_number = -1;
-        char_position = -1;
     }
     enum Mat_type type;
     int line_number;
@@ -120,9 +114,7 @@ struct Variable_Locate
         : type(t), line_number(ln), char_position(cp), line(l)
     {
     
-        type = Var_type::EMPTY;
-        line_number = -1;
-        char_position = -1;
+
     }
     enum Var_type type;
     int line_number;
@@ -135,9 +127,7 @@ struct Operation_Locate
     Operation_Locate(Operation_type t, int ln, int cp, const std::string& l)
         : type(t), line_number(ln), char_position(cp), line(l)
     {
-        type = Operation_type::EMPTY;
-        line_number = -1;
-        char_position = -1;
+
     }
     enum Operation_type type;
     int line_number;
@@ -232,6 +222,9 @@ public:
         keywords.push_back("/");//index 16
         keywords.push_back("*");//index 17
         keywords.push_back("%");//index 18
+
+        keywords.push_back("for "); //index 19
+
     }
 
 //these are all the output functions, i.e adds to the a.out
@@ -302,6 +295,7 @@ void print_type(T foo)
                 std::cout << "Unknown Operation_type\n";
         }
     }
+    
     else if constexpr (std::is_same_v<T, Var_type>) {
         switch (foo) {
             case Var_type::INTEGER:
@@ -320,10 +314,67 @@ void print_type(T foo)
                 std::cout << "Unknown Var_type\n";
         }
     }
-    else {
-        std::cout << "Unknown type\n";
+   
+    else if constexpr (std::is_same_v<T,Equ_type>)
+    {
+        switch (foo) 
+        {
+            case Equ_type::EQUAL:
+                std::cout<<"Equal operator\n";
+                break;
+            case Equ_type::BIGGER:
+                std::cout<<"Bigger operator\n";
+                break;
+            case Equ_type::SMALLER:
+                std::cout<<"Smaller operator\n";
+                break;
+            case Equ_type::BIGGER_EQUAL:
+                std::cout<<"Bigger or Equal operator\n";
+                break;
+            case Equ_type::SMALLER_EQUAL:
+                std::cout<<"Smaller or Equal operator\n";
+                break;
+            case Equ_type::EMPTY:
+                std::cout<<"Empty operator\n";
+                break;
+        }
     }
+
+    
+    
+    else if constexpr (std::is_same_v<T,Mat_type>)
+    {
+        switch (foo) 
+        {
+            case Mat_type::ADD:
+                std::cout<<"Add operation\n";
+                break;
+            case Mat_type::DIVIDE:
+                std::cout<<"Divide operation\n";
+                break;
+            case Mat_type::SUBTRACT:
+                std::cout<<"Subtract operation\n";
+                break;
+            case Mat_type::MOD:
+                std::cout<<"Mod operation\n";
+                break;
+            case Mat_type::MULTIPLY:
+                std::cout<<"Multiply operation\n";
+                break;
+            case Mat_type::EMPTY:
+                std::cout<<"Empty operation\n";
+                break;
+        }
+
+    }
+
+    else
+    {
+        std::cout<<"unknown type";
+    }
+
 }
+
 
     void debug_vector()
     {
@@ -340,19 +391,42 @@ void print_type(T foo)
             std::cout<<"\n";
         }
         
-       std::cout<<std::endl;
 
         std::cout<<"\tfound "<<Var_Store.size()<<" variables.\n\n";
         for (int i = 0 ; i < Var_Store.size() ; i++)
         {
-            std::cout<<"information on vector variable "<<i<<"\n";
+            std::cout<<"information on vector variable "<<i<<"\n\t";
+            print_type(Var_Store[i].type);
             std::cout<<"\tline data: "<<Var_Store[i].line<<std::endl;
             std::cout<<"\tstart char position in line: "<<Var_Store[i].char_position<<std::endl;
             std::cout<<"\tline number in file: "<<Var_Store[i].line_number<<std::endl;
             std::cout<<"\n";
         }
 
+        std::cout<<"\tfound "<<Equ_Store.size()<<" equality operations.\n\n";
+        for (int i = 0 ; i < Equ_Store.size() ; i++)
+        {
+            std::cout<<"information on vector equality Operation "<<i<<"\n\t";
+            print_type(Equ_Store[i].type);
+            std::cout<<"\tline data: "<<Equ_Store[i].line<<std::endl;
+            std::cout<<"\tstart char position in line: "<<Equ_Store[i].char_position<<std::endl;
+            std::cout<<"\tline number in file: "<<Equ_Store[i].line_number<<std::endl;
+            std::cout<<"\n";
+        }
+
+        std::cout<<"\tfound "<<Mat_Store.size()<<" math operations.\n\n";
+        for (int i = 0 ; i < Mat_Store.size() ; i++)
+        {
+            std::cout<<"information on vector Operation "<<i<<"\n\t";
+            print_type(Mat_Store[i].type);
+            std::cout<<"\tline data: "<<Mat_Store[i].line<<std::endl;
+            std::cout<<"\tstart char position in line: "<<Mat_Store[i].char_position<<std::endl;
+            std::cout<<"\tline number in file: "<<Mat_Store[i].line_number<<std::endl;
+            std::cout<<"\n";
+        }
+
     }
+    
 
 };
 
@@ -466,7 +540,7 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
 
     int char_pos = 0;
     Everything_Locate result;
-    std::vector<int> find(18);
+    std::vector<int> find(keywords.size());
    while (1)
    {
     int count = 0;
@@ -475,20 +549,22 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
         if (val >= line.size())
         {
             count++;
+            std::cout<<count<<" keywords searched and not found\n";
         }
     }
-    if (count == 18)
+    if (count == keywords.size())
     {   
         return result;
     }
     std::size_t found;
-    for(int i = 0 ; i < 18 ; i++)
+    for(int i = 0 ; i < keywords.size() ; i++)
     {
         
        found = line.find(keywords[i],find[i]);
 
         if(found == std::string::npos)
         {
+            std::cout<<" "<<keywords[i]<<"not found\n";
             find[i] = line.size();
             continue;
         }
@@ -572,7 +648,13 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
                 result.Temp_Mat_Store.push_back({Mat_type::MOD,-1,static_cast<int>(found),line});
                 find[i] = found + keywords[i].size() + 1;
                 break;
+            case 19:
+                result.Temp_Op_Store.push_back({Operation_type::FOR,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            
         } 
+        std::cout<<keywords[i]<<" found\n";
     }
    }
     

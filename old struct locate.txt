@@ -514,3 +514,11 @@ struct Operation_Locate
     int char_position;
     std::string line;
 };
+
+        type = Var_type::EMPTY;
+        line_number = -1;
+        char_position = -1;
+
+                type = Operation_type::EMPTY;
+        line_number = -1;
+        char_position = -1;
