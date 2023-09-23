@@ -460,3 +460,57 @@ t Find_Thing(std::string line) //this returns back a vector, also we need to dec
     }
 
 
+
+
+struct Variable_Locate
+{
+    
+    
+    enum Var_type type;
+    int line_number;
+    int char_position;
+    std::string line;
+};
+
+struct Equality_Locate
+{
+    Equality_Locate()
+    {
+        type = Equ_type::EMPTY;
+        line_number = -1;
+        char_position = -1;
+    }
+    enum Equ_type type;
+    int line_number;
+    int char_position;
+    std::string line;
+};
+
+struct Math_Locate
+{
+    Math_Locate()
+    {
+        type = Mat_type::EMPTY;
+        line_number = -1;
+        char_position = -1;
+    }
+    enum Mat_type type;
+    int line_number;
+    int char_position;
+    std::string line;
+};
+
+
+struct Operation_Locate
+{
+    Operation_Locate()
+    {
+        type = Operation_type::EMPTY;
+        line_number = -1;
+        char_position = -1;
+    }
+    enum Operation_type type;
+    int line_number;
+    int char_position;
+    std::string line;
+};

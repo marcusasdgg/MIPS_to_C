@@ -85,7 +85,8 @@ enum class Sqig_Brkt_type
 
 struct Equality_Locate
 {
-    Equality_Locate()
+    Equality_Locate(Equ_type t, int ln, int cp, const std::string& l)
+        : type(t), line_number(ln), char_position(cp), line(l)
     {
         type = Equ_type::EMPTY;
         line_number = -1;
@@ -99,7 +100,8 @@ struct Equality_Locate
 
 struct Math_Locate
 {
-    Math_Locate()
+    Math_Locate(Mat_type t, int ln, int cp, const std::string& l)
+        : type(t), line_number(ln), char_position(cp), line(l)
     {
         type = Mat_type::EMPTY;
         line_number = -1;
@@ -114,8 +116,10 @@ struct Math_Locate
 
 struct Variable_Locate
 {
-    Variable_Locate()
+   Variable_Locate(Var_type t, int ln, int cp, const std::string& l)
+        : type(t), line_number(ln), char_position(cp), line(l)
     {
+    
         type = Var_type::EMPTY;
         line_number = -1;
         char_position = -1;
@@ -128,7 +132,8 @@ struct Variable_Locate
 
 struct Operation_Locate
 {
-    Operation_Locate()
+    Operation_Locate(Operation_type t, int ln, int cp, const std::string& l)
+        : type(t), line_number(ln), char_position(cp), line(l)
     {
         type = Operation_type::EMPTY;
         line_number = -1;
@@ -455,194 +460,123 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
         }
 
          //okay control structure of this thing.
- Everything_Locate Find_Thing(std::string line) //this returns back a vector, also we need to declare the type before usage remember.
-{   //alright figured out that we can infer the (,),{,},[,] symbols later.
+ Everything_Locate Find_Thing(std::string line) 
+{   //alright need to know how this works.
+//problem is i is used both to check if found and to iterate, solution is to maybe add a new int variable to check.
+
     int char_pos = 0;
-    Everything_Locate vector;
-    //i.e t is the type std::vector<variable_locate>
-    //it then returns vector which is variable locate
-    int i = 0;
-
-    while(i < 18)
+    Everything_Locate result;
+    std::vector<int> find(18);
+   while (1)
+   {
+    int count = 0;
+    for (int val : find)
     {
-        std::cout<<i<<"th current char position"<<char_pos<<"\n";
-        std::size_t found = line.find(keywords[i],char_pos);
-        if (found == std::string::npos)
+        if (val >= line.size())
         {
-            i++;
-        }   
-
-        if(char_pos >= line.size())
-        {
-            return vector;
+            count++;
         }
-
-            Variable_Locate temp_var;
-            switch(i)
-                {
-                    case 0:
-                    temp_var.char_position = found;
-                    temp_var.line = line;
-                    temp_var.type = Var_type::INTEGER;
-                    vector.Temp_Var_Store.push_back(temp_var);
-                    char_pos = found + keywords[i].size() + 1;
-                    break;
-                        
-                    case 1:
-                    temp_var.char_position = found;
-                    temp_var.line = line;
-                    temp_var.type = Var_type::STRING;
-                    vector.Temp_Var_Store.push_back(temp_var);
-                    char_pos = found + keywords[i].size() + 1;
-                    break;
-
-                    case 2:
-                    temp_var.char_position = found;
-                    temp_var.line = line;
-                    temp_var.type = Var_type::DOUBLE;
-                    vector.Temp_Var_Store.push_back(temp_var);
-                    char_pos = found + keywords[i].size() + 1;
-                    break;
-        }
-        
-
-
-            Math_Locate temp_mat;
-            switch(i)
-            {
-                case 14:
-                temp_mat.char_position = found;
-                temp_mat.line = line;
-                temp_mat.type = Mat_type::ADD;
-                vector.Temp_Mat_Store.push_back(temp_mat);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-                case 15:
-                temp_mat.char_position = found;
-                temp_mat.line = line;
-                temp_mat.type = Mat_type::SUBTRACT;
-                vector.Temp_Mat_Store.push_back(temp_mat);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-                case 16:
-                temp_mat.char_position = found;
-                temp_mat.line = line;
-                temp_mat.type = Mat_type::DIVIDE;
-                vector.Temp_Mat_Store.push_back(temp_mat);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-                case 17:
-                temp_mat.char_position = found;
-                temp_mat.line = line;
-                temp_mat.type = Mat_type::MULTIPLY;
-                vector.Temp_Mat_Store.push_back(temp_mat);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-                case 18:
-                temp_mat.char_position = found;
-                temp_mat.line = line;
-                temp_mat.type = Mat_type::MOD;
-                vector.Temp_Mat_Store.push_back(temp_mat);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-            }
-        
-
-            Equality_Locate temp_equ;
-
-            switch (i)
-            {
-                case 9:
-                temp_equ.char_position = found;
-                temp_equ.line = line;
-                temp_equ.type = Equ_type::EQUAL;
-                vector.Temp_Equ_Store.push_back(temp_equ);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-
-                case 10:
-                temp_equ.char_position = found;
-                temp_equ.line = line;
-                temp_equ.type = Equ_type::SMALLER;
-                vector.Temp_Equ_Store.push_back(temp_equ);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-
-                case 11:
-                temp_equ.char_position = found;
-                temp_equ.line = line;
-                temp_equ.type = Equ_type::BIGGER;
-                vector.Temp_Equ_Store.push_back(temp_equ);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-
-                case 12:
-                temp_equ.char_position = found;
-                temp_equ.line = line;
-                temp_equ.type = Equ_type::SMALLER_EQUAL;
-                vector.Temp_Equ_Store.push_back(temp_equ);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-
-                case 13:
-                temp_equ.char_position = found;
-                temp_equ.line = line;
-                temp_equ.type = Equ_type::BIGGER_EQUAL;
-                vector.Temp_Equ_Store.push_back(temp_equ);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-            }
-        
-
-
-            Operation_Locate temp_Op;
-
-            switch (i)
-            {
-                case 3:
-                temp_Op.char_position = found;
-                temp_Op.line = line;
-                temp_Op.type = Operation_type::PRINTF;
-                vector.Temp_Op_Store.push_back(temp_Op);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-                case 5:
-                temp_Op.char_position = found;
-                temp_Op.line = line;
-                temp_Op.type = Operation_type::SCANF;
-                vector.Temp_Op_Store.push_back(temp_Op);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-                case 6:
-                temp_Op.char_position = found;
-                temp_Op.line = line;
-                temp_Op.type = Operation_type::RETURN;
-                vector.Temp_Op_Store.push_back(temp_Op);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-                case 7:
-                temp_Op.char_position = found;
-                temp_Op.line = line;
-                temp_Op.type = Operation_type::IF;
-                vector.Temp_Op_Store.push_back(temp_Op);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-                case 8:
-                temp_Op.char_position = found;
-                temp_Op.line = line;
-                temp_Op.type = Operation_type::ELSE;
-                vector.Temp_Op_Store.push_back(temp_Op);
-                char_pos = found + keywords[i].size() + 1;
-                break;
-            }
-        
-        
-
     }
+    if (count == 18)
+    {   
+        return result;
+    }
+    std::size_t found;
+    for(int i = 0 ; i < 18 ; i++)
+    {
+        
+       found = line.find(keywords[i],find[i]);
 
+        if(found == std::string::npos)
+        {
+            find[i] = line.size();
+            continue;
+        }
+
+
+        switch(i)
+        {
+            case 0:
+                result.Temp_Var_Store.push_back({Var_type::INTEGER,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 1:
+                result.Temp_Var_Store.push_back({Var_type::STRING,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 2:
+                result.Temp_Var_Store.push_back({Var_type::DOUBLE,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 3:
+                result.Temp_Op_Store.push_back({Operation_type::PRINTF,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 4:
+                result.Temp_Op_Store.push_back({Operation_type::SCANF,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 5:
+                result.Temp_Op_Store.push_back({Operation_type::RETURN,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 6:
+                result.Temp_Op_Store.push_back({Operation_type::WHILE,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 7:
+                result.Temp_Op_Store.push_back({Operation_type::IF,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 8:
+                result.Temp_Op_Store.push_back({Operation_type::ELSE,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 9:
+                result.Temp_Equ_Store.push_back({Equ_type::EQUAL,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 10:
+                result.Temp_Equ_Store.push_back({Equ_type::SMALLER,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 11:
+                result.Temp_Equ_Store.push_back({Equ_type::BIGGER,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 12:
+                result.Temp_Equ_Store.push_back({Equ_type::SMALLER_EQUAL,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 13:
+                result.Temp_Equ_Store.push_back({Equ_type::BIGGER_EQUAL,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 14:
+                result.Temp_Mat_Store.push_back({Mat_type::ADD,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 15:
+                result.Temp_Mat_Store.push_back({Mat_type::SUBTRACT,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 16:
+                result.Temp_Mat_Store.push_back({Mat_type::DIVIDE,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 17:
+                result.Temp_Mat_Store.push_back({Mat_type::MULTIPLY,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+            case 18:
+                result.Temp_Mat_Store.push_back({Mat_type::MOD,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
+        } 
+    }
+   }
     
-    
-    return vector;
+    return result;
 }
         
 
@@ -697,11 +631,10 @@ inline void MIPS::parser()//here comes the hard part, searching for "key words l
 
     for(int i = 0 ; i < line_count ; i++)
     {
-        std::cout<<i<<"th iteration\n";
         current_line = get_line(i);
         Everything_Locate temp = Find_Thing(current_line);
         for(auto val : temp.Temp_Equ_Store)
-        {
+        {   
             val.line_number = i;
             Equ_Store.push_back(val);
         }
@@ -723,8 +656,6 @@ inline void MIPS::parser()//here comes the hard part, searching for "key words l
             val.line_number = i;
             Var_Store.push_back(val);
         }
-
-
         
     }
 }
