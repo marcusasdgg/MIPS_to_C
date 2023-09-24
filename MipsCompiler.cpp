@@ -24,7 +24,8 @@ enum class Var_type
     INTEGER,
     STRING,
     DOUBLE,
-    EMPTY
+    EMPTY,
+    VOID
 };
 
 enum class Operation_type
@@ -143,6 +144,16 @@ struct Everything_Locate
     std::vector<Equality_Locate> Temp_Equ_Store;
     std::vector<Math_Locate> Temp_Mat_Store;
 };
+
+struct Function_Locate
+{
+    Var_type return_type;
+    std::string name;
+    int start_line; //where the function is declared. {line before { operator}
+    int end_line; //where the block end is declared (i.e } operator)
+
+};
+
 class File//need to create a file reader as well to parse all the lines from the input c file.
 {
 public:
@@ -159,9 +170,7 @@ public:
     std::vector<Variable_Locate> Var_Store;
     std::vector<Equality_Locate> Equ_Store;
     std::vector<Math_Locate> Mat_Store;
-
-
-
+    std::vector<Function_Locate> function_store;
     
     File(std::string filepat,std::string output){
         in_filepath = filepat;
@@ -224,6 +233,7 @@ public:
         keywords.push_back("%");//index 18
 
         keywords.push_back("for "); //index 19
+        keywords.push_back("void "); //index 20
 
     }
 
@@ -309,6 +319,9 @@ void print_type(T foo)
                 break;
             case Var_type::EMPTY:
                 std::cout << "Var Empty\n";
+                break;
+            case Var_type::VOID:
+                std::cout <<"Var Void\n";
                 break;
             default:
                 std::cout << "Unknown Var_type\n";
@@ -424,7 +437,7 @@ void print_type(T foo)
             std::cout<<"\tline number in file: "<<Mat_Store[i].line_number<<std::endl;
             std::cout<<"\n";
         }
-
+ 
     }
     
 
@@ -441,6 +454,8 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
 {
     registercounter = 0;
 }
+
+int main_start_line = 0;
 
         
 
@@ -650,7 +665,10 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
                 result.Temp_Op_Store.push_back({Operation_type::FOR,-1,static_cast<int>(found),line});
                 find[i] = found + keywords[i].size() + 1;
                 break;
-            
+            case 20:
+                result.Temp_Var_Store.push_back({Var_type::VOID,-1,static_cast<int>(found),line});
+                find[i] = found + keywords[i].size() + 1;
+                break;
         } 
     }
    }
@@ -665,7 +683,7 @@ class MIPS : public File//this class stores 10 variables, i need to figure out h
 
         void coder(); //adds the represented vectors as mips assembly in the output file.
 
-        
+        void find_function();
 
 };
 
@@ -737,6 +755,8 @@ inline void MIPS::parser()//here comes the hard part, searching for "key words l
         }
         
     }
+
+    //now we find any functions, 
 }
 
 
@@ -765,6 +785,23 @@ inline void MIPS::coder() //this will read the stuff in the 2 vectors and actual
 
 }
 
+
+inline void MIPS::find_function()
+{
+    std::vector<Function_Locate> temp;
+    for (auto val : Var_Store)
+    {
+        //find the word after the int, var or string or void specifier, if ( is after then all good.
+         switch (val.type)
+         {
+            case Var_type::DOUBLE:
+                
+            case Var_type::INTEGER:
+            case Var_type::STRING:
+            case Var_type::VOID:
+         } 
+    }
+}
 
 //huge error: forgot to add the variable initializer. need to create a function that reads the line 
     
