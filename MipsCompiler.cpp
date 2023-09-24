@@ -147,6 +147,11 @@ struct Everything_Locate
 
 struct Function_Locate
 {
+    Function_Locate(Var_type t, int start, int end, const std::string& l)
+        : return_type(t),start_line(start),end_line(end),name(l)
+        {
+
+        }
     Var_type return_type;
     std::string name;
     int start_line; //where the function is declared. {line before { operator}
@@ -791,14 +796,43 @@ inline void MIPS::find_function()
     std::vector<Function_Locate> temp;
     for (auto val : Var_Store)
     {
+        std::string newstr;
         //find the word after the int, var or string or void specifier, if ( is after then all good.
          switch (val.type)
          {
             case Var_type::DOUBLE:
-                
+              int subst = val.line.find("double ") + 7;
+              while (val.line[subst] != ' ')
+              {
+                newstr.push_back(val.line[subst]);
+              }
+              break;
             case Var_type::INTEGER:
+                int subst = val.line.find("int ") + 4;
+              while (val.line[subst] != ' ')
+              {
+                newstr.push_back(val.line[subst]);
+              }
+              break;
             case Var_type::STRING:
+                int subst = val.line.find("string ") + 8;
+              while (val.line[subst] != ' ')
+              {
+                newstr.push_back(val.line[subst]);
+              }
+              break;
             case Var_type::VOID:
+                int subst = val.line.find("void ") + 6;
+              while (val.line[subst] != ' ')
+              {
+                newstr.push_back(val.line[subst]);
+              }
+              break;
+
+              if(newstr.find("(") == std::string::npos) //now we search for the arguments of the thing;
+              {
+                    
+              }
          } 
     }
 }

@@ -522,3 +522,6 @@ struct Operation_Locate
                 type = Operation_type::EMPTY;
         line_number = -1;
         char_position = -1;
+
+        size of double:
+        1 2 3 4 5 6 7
