@@ -121,6 +121,7 @@ struct Variable_Locate
     int line_number;
     int char_position;
     std::string line;
+    std::string name;
 };
 
 struct Operation_Locate
@@ -444,6 +445,7 @@ void print_type(T foo)
         }
  
     }
+
     
 
 };
@@ -690,6 +692,8 @@ int main_start_line = 0;
 
         void find_function();
 
+        std::string find_variable();        
+
 };
 
 
@@ -829,12 +833,22 @@ inline void MIPS::find_function()
               }
               break;
 
-              if(newstr.find("(") == std::string::npos) //now we search for the arguments of the thing;
+              if(newstr.find("(") != std::string::npos) //now we search for the arguments of the thing;
               {
                     
               }
          } 
     }
+}
+
+//int i = 0 ; or int i; how to implement this?
+
+inline std::string find_variable(Variable_Locate val) //this function finds the name of the variable in syntax: int i = 0; variable is "i"
+{
+    std::string result;
+    int start =  val.line.find(" " ,val.char_position);
+    int end = 
+   
 }
 
 //huge error: forgot to add the variable initializer. need to create a function that reads the line 
